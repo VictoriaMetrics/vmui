@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {axisLeft, ScaleLinear, select as d3Select} from "d3";
 import {format as d3Format} from "d3-format";
 

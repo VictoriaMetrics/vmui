@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {axisBottom, ScaleTime, select as d3Select} from "d3";
 
 interface AxisBottomI {

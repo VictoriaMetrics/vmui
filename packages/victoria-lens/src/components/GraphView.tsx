@@ -1,18 +1,16 @@
-// @ts-nocheck
-
 import React, {FC, useMemo} from "react";
 import {MetricResult} from "../api/types";
 
 import {scaleOrdinal, schemeSet2} from "d3";
 
 import {LineChart} from "./LineChart/LineChart";
-import {DataSeries, TimePresets} from "../types";
+import {DataSeries, TimeParams} from "../types";
 import {getNameForMetric} from "../utils/metric";
 import {Legend} from "./Lelend/Legend";
 
 export interface GraphViewProps {
-  data?: MetricResult[];
-  timePresets: TimePresets
+  data: MetricResult[];
+  timePresets: TimeParams
 }
 
 const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
@@ -22,9 +20,10 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
       metadata: {
         name: getNameForMetric(d)
       },
+      // VM metrics are tuples - much simpler to work with objects in chart
       values: d.values.map(v => ({
         key: v[0],
-        value: v[1]
+        value: +v[1]
       }))
     }))
   }, [data])

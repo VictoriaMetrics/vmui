@@ -1,27 +1,20 @@
-import React, {useCallback, useMemo, useRef, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {line as d3Line, max as d3Max, scaleLinear, ScaleOrdinal, scaleTime} from "d3";
 import "./line-chart.css";
 import Measure from "react-measure";
 import {AxisBottom} from "./AxisBottom";
 import {AxisLeft} from "./AxisLeft";
-import {InteractionType} from "./InteractionArea";
-import {InteractionLine} from "./InteractionLine";
-import {DataSeries, DataValue, TimePresets} from "../../types";
+import {DataSeries, DataValue, TimeParams} from "../../types";
 
 interface LineChartProps {
   series: DataSeries[];
-  timePresets: TimePresets;
+  timePresets: TimeParams;
   height: number;
   color: ScaleOrdinal<string, string> // maps name to color hex code
 }
 
 export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height, color}) => {
   const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
-
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  const [xCoord, setXCoord] = useState<number>();
-  const [xKey, setXKey] = useState<InteractionType>();
 
   const margin = {top: 10, right: 20, bottom: 70, left: 50};
   const svgWidth = useMemo(() => screenWidth - margin.left - margin.right, [screenWidth, margin.left, margin.right]);
@@ -36,7 +29,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const yScale = useMemo(
     () =>
       scaleLinear()
-        .domain([0, d3Max(series.reduce((acc: DataValue[], next: DataSeries) => [...acc, ...next.values], []), (_) => +_.value) || 1]) // input
+        .domain([0, d3Max(series.reduce((acc: DataValue[], next: DataSeries) => [...acc, ...next.values], []), (_) => _.value) || 1]) // input
         .range([svgHeight, 0])
         .nice(),
     [series, svgHeight]
@@ -50,18 +43,6 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
     [xScale, yScale]
   );
   const getDataLine = (series: DataSeries) => line(series.values);
-
-  const handleChartInteraction = useCallback(
-    (key: number) => {
-      setXCoord(xScale(new Date(key)));
-      setXKey(key);
-      setShowTooltip(true);
-    },
-    [xScale]
-  );
-
-  // not sure it is ok to connect to g - not to interaction area
-  const tooltipAnchor = useRef<SVGGElement>(null);
 
   return (
     <Measure bounds onResize={({bounds}) => bounds && setScreenWidth(bounds?.width)}>
@@ -79,18 +60,10 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
               <AxisBottom xScale={xScale} height={svgHeight} />
               <AxisLeft yScale={yScale} label={yAxisLabel} />
               {series.map((s, i) =>
-                  <path stroke={color(s.metadata.name)} key={i} className="line" d={getDataLine(s) as string} clipPath="url(#clip-line)" />)}
-
-              <InteractionLine height={svgHeight} x={xCoord} />
-              {/*NOTE: in SVG last element wins - so since we want mouseover to work in all area this should be last*/}
-              {/*<g ref={tooltipAnchor}>*/}
-              {/*  <InteractionArea*/}
-              {/*    xScale={xScale}*/}
-              {/*    yScale={yScale}*/}
-              {/*    dataForChart={aggregatedData}*/}
-              {/*    onInteraction={handleChartInteraction}*/}
-              {/*  />*/}
-              {/*</g>*/}
+                  <path stroke={color(s.metadata.name)}
+                        key={i} className="line"
+                        d={getDataLine(s) as string}
+                        clipPath="url(#clip-line)"/>)}
             </g>
           </svg>
         </div>
