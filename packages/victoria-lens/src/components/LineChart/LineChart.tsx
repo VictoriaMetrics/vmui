@@ -24,7 +24,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
     timePresets
   ]);
 
-  const yAxisLabel = "TODO: label";
+  const yAxisLabel = ""; // TODO: label
 
   const yScale = useMemo(
     () =>

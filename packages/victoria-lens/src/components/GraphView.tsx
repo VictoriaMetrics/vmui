@@ -6,7 +6,7 @@ import {scaleOrdinal, schemeSet2} from "d3";
 import {LineChart} from "./LineChart/LineChart";
 import {DataSeries, TimeParams} from "../types";
 import {getNameForMetric} from "../utils/metric";
-import {Legend} from "./Lelend/Legend";
+import {Legend} from "./Legend/Legend";
 
 export interface GraphViewProps {
   data: MetricResult[];
@@ -33,7 +33,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
   const color = useMemo(() =>
       scaleOrdinal<string>()
         .domain(seriesNames) // associate series names with colors
-        .range(schemeSet2), [series])
+        .range(schemeSet2), [seriesNames])
 
   return (
       <>
