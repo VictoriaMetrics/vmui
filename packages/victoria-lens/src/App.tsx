@@ -44,7 +44,7 @@ function App() {
   const [timePreset, setTimePreset] = useState<TimePreset>(TimePreset.lastHour);
 
   const [server, setServer] = useState("http://127.0.0.1:8428");
-  const [query, setQuery] = useState("rate(\n\tvm_cache_size_bytes[5m]\n)");
+  const [query, setQuery] = useState("rate(vm_cache_size_bytes[5m])");
 
   const [graphData, setGraphData] = useState<MetricResult[]>();
 
@@ -110,7 +110,7 @@ function App() {
           <Grid item xs={6} md={8}>
             <Box m={2}>
               <Typography variant="body1">The Query</Typography>
-              <QueryEditor query={query} setQuery={setQuery}/>
+              <QueryEditor server={server} query={query} setQuery={setQuery}/>
             </Box>
           </Grid>
           <Grid item xs={12}>
