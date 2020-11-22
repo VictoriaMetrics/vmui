@@ -2,12 +2,16 @@ import {EditorState} from "@codemirror/next/state"
 import {EditorView, keymap} from "@codemirror/next/view"
 import {defaultKeymap} from "@codemirror/next/commands"
 import React, {FC, useEffect, useRef, useState} from "react";
-import {basicSetup} from "@codemirror/next/basic-setup";
+import { PromQLExtension } from 'codemirror-promql';
+import { basicSetup } from '@codemirror/next/basic-setup';
 
 export interface QueryEditorProps {
   setQuery: (query: string) => void;
   query: string;
 }
+
+// TODO: use value from input
+const promQL = new PromQLExtension().setComplete({url: 'http://127.0.0.1:8428'})
 
 const QueryEditor: FC<QueryEditorProps> = ({query, setQuery}) => {
 
@@ -31,7 +35,7 @@ const QueryEditor: FC<QueryEditorProps> = ({query, setQuery}) => {
         {
           state: EditorState.create({
             doc: query,
-            extensions: [basicSetup, keymap(defaultKeymap), listenerExtension]
+            extensions: [basicSetup, keymap(defaultKeymap), listenerExtension, promQL.asExtension()]
           }),
           parent: ref.current
         })

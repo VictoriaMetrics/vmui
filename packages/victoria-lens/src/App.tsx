@@ -44,7 +44,7 @@ function App() {
   const [timePreset, setTimePreset] = useState<TimePreset>(TimePreset.lastHour);
 
   const [server, setServer] = useState("http://127.0.0.1:8428");
-  const [query, setQuery] = useState("rate(\n\tvm_cache_size_bytes[5m]\n)");
+  const [query, setQuery] = useState(""); // rate(vm_cache_size_bytes[5m])
 
   const [graphData, setGraphData] = useState<MetricResult[]>();
 
