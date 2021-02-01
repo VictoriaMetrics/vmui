@@ -12,3 +12,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.cm-activeLine {
+  background-color: inherit !important; /* TODO: find better way to override codemirror styles */
+}
