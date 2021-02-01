@@ -1,4 +1,4 @@
-import React, {FC, useMemo} from "react";
+import React, {FC, useMemo, useState} from "react";
 import {MetricResult} from "../api/types";
 
 import {scaleOrdinal, schemeSet2} from "d3";
@@ -6,7 +6,7 @@ import {scaleOrdinal, schemeSet2} from "d3";
 import {LineChart} from "./LineChart/LineChart";
 import {DataSeries, TimeParams} from "../types";
 import {getNameForMetric} from "../utils/metric";
-import {Legend} from "./Legend/Legend";
+import {Legend, LegendItem} from "./Legend/Legend";
 
 export interface GraphViewProps {
   data: MetricResult[];
@@ -35,10 +35,35 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
         .domain(seriesNames) // associate series names with colors
         .range(schemeSet2), [seriesNames])
 
+  const initLabels = useMemo(() => {
+    return seriesNames.map(name => ({
+      color: color(name),
+      label: name,
+      checked: true // init with checked always
+    } as LegendItem));
+  }, [color, seriesNames])
+
+  const [labels, setLabels] = useState(initLabels);
+
+  const visibleNames = useMemo(() => labels.filter(l => l.checked).map(l => l.label), [labels]);
+
+  const visibleSeries = useMemo(() => series.filter(s => visibleNames.includes(s.metadata.name)), [series, visibleNames])
+
+  const onLegendChange = (index: number) => {
+    setLabels(prevState => {
+      if (prevState) {
+        const newState = [...prevState];
+        newState[index] = {...newState[index], checked: !newState[index].checked};
+        return newState;
+      }
+      return prevState;
+    })
+  }
+
   return (
       <>
-        <LineChart height={400} series={series} color={color} timePresets={timePresets}></LineChart>
-        <Legend names={seriesNames} color={color} ></Legend>
+        <LineChart height={400} series={visibleSeries} color={color} timePresets={timePresets}></LineChart>
+        <Legend labels={labels} onChange={onLegendChange}></Legend>
       </>
   )
 }
