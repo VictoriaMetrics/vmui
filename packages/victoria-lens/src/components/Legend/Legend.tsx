@@ -1,17 +1,37 @@
 import React, {FC} from "react";
-import {ScaleOrdinal} from "d3";
+import {Checkbox, FormControlLabel, Typography} from "@material-ui/core";
 
-export interface LegendProps {
-  names: string[];
-  color: ScaleOrdinal<string, string> // maps name to color hex code
+export interface LegendItem {
+  label: string;
+  color: string;
+  checked: boolean;
 }
 
-export const Legend: FC<LegendProps> = ({names, color}) => {
+export interface LegendProps {
+  labels: LegendItem[];
+  onChange: (index: number) => void;
+}
+
+export const Legend: FC<LegendProps> = ({labels, onChange}) => {
+
   return <div>
-    {names.map((name: string) =>
-        <div key={name} style={{display: "flex", flexDirection: "row", paddingTop: "5px"}}>
-          <div style={{width: "1em", height: "1em", backgroundColor: color(name), marginRight: "5px"}}></div>
-          <div>{name}</div>
+    {labels.map((legendItem: LegendItem, index) =>
+        <div key={legendItem.label}>
+          <FormControlLabel
+              control={
+                <Checkbox
+                    size="small"
+                    checked={legendItem.checked}
+                    onChange={() => {
+                      onChange(index);
+                    }}
+                    style={{
+                      color: legendItem.color,
+                    }}
+                />
+              }
+              label={<Typography variant="body2">{legendItem.label}</Typography>}
+          />
         </div>
     )}
   </div>
