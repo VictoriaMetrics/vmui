@@ -1,22 +1,26 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import QueryEditor from "./components/QueryEditor";
-import {MetricResult, QueryRangeResponse} from "./api/types";
+import {InstantMetricResult, MetricResult} from "./api/types";
 import GraphView from "./components/GraphView";
 import {AppBar, Box, Card, CardContent, Grid, TextField, Toolbar, Typography} from "@material-ui/core";
-import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
-import {getQueryRangeUrl} from "./api/query-range";
+import {getQueryRangeUrl, getQueryUrl} from "./api/query-range";
 import {getTimeperiodForPreset, TimePreset} from "./utils/time";
 import {UrlLine} from "./components/Home/UrlLine";
 import {SnackbarProvider} from "./contexts/Snackbar";
+import {DisplayType, DisplayTypeSwitch} from "./components/Home/DisplayTypeSwitch";
+import {TimeSelector} from "./components/Home/TimeSelector";
+import TableView from "./components/TableView";
 
 function App() {
 
   const [timePreset, setTimePreset] = useState<TimePreset>(TimePreset.lastHour);
+  const [type, setType] = useState<DisplayType>("chart");
 
   const [server, setServer] = useState("http://127.0.0.1:8428");
   const [query, setQuery] = useState("rate(\n\t\tvm_cache_size_bytes[5m]\n)");
 
   const [graphData, setGraphData] = useState<MetricResult[]>();
+  const [liveData, setLiveData] = useState<InstantMetricResult[]>();
 
   const period = useMemo(() => {
     return getTimeperiodForPreset(timePreset)
@@ -24,19 +28,23 @@ function App() {
 
   // TODO: this should depend on query as well, but need to decide when to do the request.
   //       Doing it on each query change - looks to be a bad idea. Probably can be done on blur
-  const fetchUrl = useMemo(() => getQueryRangeUrl(server, query, period), [server, period])
+  const fetchUrl = useMemo(() =>
+      type === "chart"
+          ? getQueryRangeUrl(server, query, period)
+          : getQueryUrl(server, query, period),
+      [server, period, type])
 
   useEffect(() => {
     (async () => {
       let response = await fetch(fetchUrl);
       if (response.ok) {
-        const resp: QueryRangeResponse = await response.json();
-        setGraphData(resp.data.result);
+        const resp = await response.json();
+        type === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
       } else {
         alert((await response.json())?.error);
       }
     })()
-  }, [fetchUrl]);
+  }, [fetchUrl, type]);
 
   return (
       <SnackbarProvider>
@@ -68,43 +76,27 @@ function App() {
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Box m={2}>
-                        <Box m={2}>
-                          <ToggleButtonGroup
-                              value={timePreset}
-                              exclusive
-                              onChange={
-                                (e, val) =>
-                                    // Toggle Button Group returns null in case of click on selected element, avoiding it
-                                    setTimePreset(prev => val ?? prev)
-                              }>
-                            <ToggleButton value={TimePreset.last2Min} aria-label="last 2 min">
-                              2 min
-                            </ToggleButton>
-                            <ToggleButton value={TimePreset.last15Min} aria-label="last 15 min">
-                              15 min
-                            </ToggleButton>
-                            <ToggleButton value={TimePreset.lastHour} aria-label="last hour">
-                              1 hr
-                            </ToggleButton>
-                            <ToggleButton value={TimePreset.last24Hours} aria-label="last 24 hours">
-                              24 hrs
-                            </ToggleButton>
-                          </ToggleButtonGroup>
-                        </Box>
+                        <TimeSelector setTimePreset={setTimePreset} timePreset={timePreset}/>
                       </Box>
                     </Grid>
                   </Grid>
+
+                  <Box display="flex" justifyContent="flex-end">
+                    <DisplayTypeSwitch type={type} setType={setType}/>
+                  </Box>
 
                 </CardContent>
               </Card>
             </Box>
           </Grid>
 
-          <UrlLine url={fetchUrl} />
+          <UrlLine url={fetchUrl}/>
 
           <Grid item xs={12}>
             <Box p={2}>
-              {graphData && <GraphView data={graphData} timePresets={period}></GraphView>}
+              {graphData && (type === "chart") && <GraphView data={graphData} timePresets={period}></GraphView>}
+              {liveData && (type === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
+              {liveData && (type === "table") && <TableView data={liveData}/>}
             </Box>
           </Grid>
         </Grid>
