@@ -26,13 +26,13 @@ export const DisplayTypeSwitch: FC<DisplayTypeSwitch> = ({type, setType}) => {
               setType(val ?? type)
         }>
       <ToggleButton value="chart" aria-label="display as chart">
-        <ShowChartIcon/>&nbsp;Chart
+        <ShowChartIcon/>&nbsp;Query Range as Chart
       </ToggleButton>
       <ToggleButton value="code" aria-label="display as code">
-        <CodeIcon/>&nbsp;Current as JSON
+        <CodeIcon/>&nbsp;Instant Query as JSON
       </ToggleButton>
       <ToggleButton value="table" aria-label="display as table">
-        <TableChartIcon/>&nbsp;Current as Table
+        <TableChartIcon/>&nbsp;Instant Query as Table
       </ToggleButton>
     </ToggleButtonGroup>
   </Box>
