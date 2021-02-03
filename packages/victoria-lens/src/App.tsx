@@ -63,23 +63,36 @@ function App() {
                   <Typography variant="h6" component="h2">
                     Query Configuration
                   </Typography>
-                  <Grid container>
-                    <Grid item xs={12} md={6}>
-                      <Box m={2}>
-                        <Box py={2}>
-                          <TextField fullWidth placeholder="Server URL" value={server}
-                                     onChange={(e) => setServer(e.target.value)}/>
-                        </Box>
-                        <QueryEditor server={server} query={query} setQuery={setQuery}/>
+                  <Box py={2}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Box>
+                          <Box py={2}>
+                            <TextField variant="outlined" fullWidth label="Server URL" value={server}
+                                       inputProps={{
+                                         style: {fontFamily: "Monospace"}
+                                       }}
+                                       onChange={(e) => setServer(e.target.value)}/>
+                          </Box>
+                          <QueryEditor server={server} query={query} setQuery={setQuery}/>
 
-                      </Box>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <Box style={{
+                          borderRadius: "4px",
+                          borderColor: "#b9b9b9",
+                          borderStyle: "solid",
+                          borderWidth: "1px",
+                          height: "calc(100% - 18px)",
+                          marginTop: "16px"
+                        }}>
+                          <TimeSelector setTimePreset={setTimePreset} timePreset={timePreset}/>
+                        </Box>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Box m={2}>
-                        <TimeSelector setTimePreset={setTimePreset} timePreset={timePreset}/>
-                      </Box>
-                    </Grid>
-                  </Grid>
+                  </Box>
+
 
                   <Box display="flex" justifyContent="flex-end">
                     <DisplayTypeSwitch type={type} setType={setType}/>
