@@ -4,16 +4,15 @@ import {InstantMetricResult, MetricResult} from "./api/types";
 import GraphView from "./components/GraphView";
 import {AppBar, Box, Card, CardContent, Grid, TextField, Toolbar, Typography} from "@material-ui/core";
 import {getQueryRangeUrl, getQueryUrl} from "./api/query-range";
-import {getTimeperiodForPreset, TimePreset} from "./utils/time";
 import {UrlLine} from "./components/Home/UrlLine";
 import {SnackbarProvider} from "./contexts/Snackbar";
 import {DisplayType, DisplayTypeSwitch} from "./components/Home/DisplayTypeSwitch";
 import {TimeSelector} from "./components/Home/TimeSelector";
 import TableView from "./components/TableView";
+import {TimeParams} from "./types";
 
 function App() {
 
-  const [timePreset, setTimePreset] = useState<TimePreset>(TimePreset.lastHour);
   const [type, setType] = useState<DisplayType>("chart");
 
   const [server, setServer] = useState("http://127.0.0.1:8428");
@@ -22,26 +21,29 @@ function App() {
   const [graphData, setGraphData] = useState<MetricResult[]>();
   const [liveData, setLiveData] = useState<InstantMetricResult[]>();
 
-  const period = useMemo(() => {
-    return getTimeperiodForPreset(timePreset)
-  }, [timePreset])
+  const [period, setPeriod] = useState<TimeParams>();
 
   // TODO: this should depend on query as well, but need to decide when to do the request.
   //       Doing it on each query change - looks to be a bad idea. Probably can be done on blur
-  const fetchUrl = useMemo(() =>
-      type === "chart"
-          ? getQueryRangeUrl(server, query, period)
-          : getQueryUrl(server, query, period),
+  const fetchUrl = useMemo(() => {
+        if (period) {
+          return type === "chart"
+              ? getQueryRangeUrl(server, query, period)
+              : getQueryUrl(server, query, period)
+        }
+      },
       [server, period, type])
 
   useEffect(() => {
     (async () => {
-      let response = await fetch(fetchUrl);
-      if (response.ok) {
-        const resp = await response.json();
-        type === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
-      } else {
-        alert((await response.json())?.error);
+      if (fetchUrl) {
+        let response = await fetch(fetchUrl);
+        if (response.ok) {
+          const resp = await response.json();
+          type === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
+        } else {
+          alert((await response.json())?.error);
+        }
       }
     })()
   }, [fetchUrl, type]);
@@ -87,7 +89,7 @@ function App() {
                           height: "calc(100% - 18px)",
                           marginTop: "16px"
                         }}>
-                          <TimeSelector setTimePreset={setTimePreset} timePreset={timePreset}/>
+                          <TimeSelector setPeriod={setPeriod} period={period}/>
                         </Box>
                       </Grid>
                     </Grid>
@@ -107,7 +109,8 @@ function App() {
 
           <Grid item xs={12}>
             <Box p={2}>
-              {graphData && (type === "chart") && <GraphView data={graphData} timePresets={period}></GraphView>}
+              {graphData && period && (type === "chart") &&
+              <GraphView data={graphData} timePresets={period}></GraphView>}
               {liveData && (type === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
               {liveData && (type === "table") && <TableView data={liveData}/>}
             </Box>

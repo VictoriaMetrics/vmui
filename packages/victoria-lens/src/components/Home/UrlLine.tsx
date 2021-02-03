@@ -3,7 +3,7 @@ import {Box, Button, Grid, Typography} from "@material-ui/core";
 import {useSnack} from "../../contexts/Snackbar";
 
 interface UrlLineProps {
-  url: string
+  url?: string
 }
 
 export const UrlLine: FC<UrlLineProps> = ({url}) => {
@@ -30,8 +30,10 @@ export const UrlLine: FC<UrlLineProps> = ({url}) => {
       </Box>
       <Box px={2} py={1} flexShrink={0} display="flex">
         <Button size="small" onClick={() => {
-          navigator.clipboard.writeText(url);
-          showInfoMessage("Value has been copied");
+          if (url) {
+            navigator.clipboard.writeText(url);
+            showInfoMessage("Value has been copied");
+          }
         }}>Copy Query Url</Button>
       </Box>
     </Box>
