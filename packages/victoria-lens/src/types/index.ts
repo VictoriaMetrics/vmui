@@ -15,3 +15,14 @@ export interface DataSeries {
   }
   values: DataValue[]; // sorted by key which is timestamp
 }
+
+
+export interface InstantDataSeries {
+  metadata: {
+    name: string;
+    instance: string;
+    job: string;
+    type: string;
+  }
+  value: string;
+}
