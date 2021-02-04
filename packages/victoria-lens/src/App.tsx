@@ -3,11 +3,13 @@ import QueryEditor from "./components/QueryEditor";
 import {InstantMetricResult, MetricResult} from "./api/types";
 import GraphView from "./components/GraphView";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   AppBar,
   Box,
-  Card,
-  CardContent,
-  CircularProgress, Fade,
+  CircularProgress,
+  Fade,
   Grid,
   TextField,
   Toolbar,
@@ -22,6 +24,7 @@ import TableView from "./components/TableView";
 import {TimeParams} from "./types";
 import {ExecutionControls} from "./components/Home/ExecutionControls";
 import {getTimeperiodForDuration} from "./utils/time";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 function App() {
 
@@ -87,49 +90,50 @@ function App() {
         <Grid container spacing={0}>
           <Grid item xs={12}>
             <Box m={2}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" component="h2">
-                    Query Configuration
-                  </Typography>
-                  <Box py={2}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <Box>
-                          <Box py={2}>
-                            <TextField variant="outlined" fullWidth label="Server URL" value={server}
-                                       inputProps={{
-                                         style: {fontFamily: "Monospace"}
-                                       }}
-                                       onChange={(e) => setServer(e.target.value)}/>
-                          </Box>
-                          <QueryEditor server={server} query={query} setQuery={setQuery}/>
 
+              <Accordion defaultExpanded={true}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
+                  <Typography variant="h6" component="h2">Query Configuration</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <Box>
+                        <Box py={2}>
+                          <TextField variant="outlined" fullWidth label="Server URL" value={server}
+                                     inputProps={{
+                                       style: {fontFamily: "Monospace"}
+                                     }}
+                                     onChange={(e) => setServer(e.target.value)}/>
                         </Box>
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                        <Box style={{
-                          borderRadius: "4px",
-                          borderColor: "#b9b9b9",
-                          borderStyle: "solid",
-                          borderWidth: "1px",
-                          height: "calc(100% - 18px)",
-                          marginTop: "16px"
-                        }}>
-                          <TimeSelector setDuration={setDuration} duration={duration}/>
-                        </Box>
-                      </Grid>
+                        <QueryEditor server={server} query={query} setQuery={setQuery}/>
+
+                      </Box>
                     </Grid>
-                  </Box>
+                    <Grid item xs={12} md={6}>
+                      <Box style={{
+                        borderRadius: "4px",
+                        borderColor: "#b9b9b9",
+                        borderStyle: "solid",
+                        borderWidth: "1px",
+                        height: "calc(100% - 18px)",
+                        marginTop: "16px"
+                      }}>
+                        <TimeSelector setDuration={setDuration} duration={duration}/>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
 
-
-                  <Box display="flex" justifyContent="space-between">
-                    <ExecutionControls onRun={onRunHandler}/>
-                    <DisplayTypeSwitch type={type} setType={setType}/>
-                  </Box>
-
-                </CardContent>
-              </Card>
+              <Box mt={2} display="flex" justifyContent="space-between">
+                <ExecutionControls onRun={onRunHandler}/>
+                <DisplayTypeSwitch type={type} setType={setType}/>
+              </Box>
             </Box>
           </Grid>
 
