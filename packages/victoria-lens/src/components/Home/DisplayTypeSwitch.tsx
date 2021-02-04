@@ -1,5 +1,4 @@
 import React, {FC} from "react";
-import {Box} from "@material-ui/core";
 
 import TableChartIcon from "@material-ui/icons/TableChart";
 import ShowChartIcon from "@material-ui/icons/ShowChart";
@@ -9,15 +8,14 @@ import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
 
 export type DisplayType = "table" | "chart" | "code";
 
-interface DisplayTypeSwitch {
+interface DisplayTypeSwitchProps {
   type: DisplayType;
   setType: (type: DisplayType) => void;
 }
 
-export const DisplayTypeSwitch: FC<DisplayTypeSwitch> = ({type, setType}) => {
+export const DisplayTypeSwitch: FC<DisplayTypeSwitchProps> = ({type, setType}) => {
 
-  return <Box>
-    <ToggleButtonGroup
+  return <ToggleButtonGroup
         value={type}
         exclusive
         onChange={
@@ -35,5 +33,4 @@ export const DisplayTypeSwitch: FC<DisplayTypeSwitch> = ({type, setType}) => {
         <TableChartIcon/>&nbsp;Instant Query as Table
       </ToggleButton>
     </ToggleButtonGroup>
-  </Box>
 }
