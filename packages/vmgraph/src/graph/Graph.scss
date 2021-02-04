@@ -1,0 +1,105 @@
+.Graph {
+  margin: 0 50px 30px;
+
+  display: flex;
+  flex-direction: column;
+  //background-color: #262626;
+  //border: 1px #444 solid;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    margin: 0 0 10px 0;
+  }
+
+  .row > * {
+    margin-right: 15px;
+  }
+
+  .row > *:last-child {
+    margin-right: 0;
+  }
+
+  .graph-params {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      text-align: center;
+    }
+
+    .query {
+      .query-input {
+        flex-grow: 1;
+        padding: 10px 5px;
+      }
+
+      button {
+        border: 1.2px #343a40 solid;
+        border-radius: 2px;
+      }
+
+      button:hover {
+        color: black;
+      }
+
+      button:active {
+        color: gray;
+      }
+    }
+
+    .range {
+      display: flex;
+      flex-direction: row;
+
+      input {
+        width: 60px;
+        border-width: 1px 0;
+      }
+
+      button.range-minus, button.range-plus {
+        border-width: 1px;
+        border-radius: 0;
+      }
+    }
+
+    .date {
+      display: flex;
+      flex-direction: row;
+
+      input {
+        border-width: 1px 0;
+      }
+    }
+
+    .step {
+      input {
+        width: 40px;
+      }
+    }
+
+    .stacked {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  .chartWrapper {
+    // For some reason MetricsGraphics plots line legend, but outside the chart area, so only a little visible.
+    .mg-line-legend {
+      display: none;
+    }
+  }
+
+  .statistics {
+    text-align: right;
+    color: gray;
+    font-size: 0.9em;
+  }
+
+  .query-error {
+    color: darkred;
+    text-align: left;
+  }
+}

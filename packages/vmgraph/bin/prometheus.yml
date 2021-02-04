@@ -1,0 +1,20 @@
+global:
+  scrape_interval:     1s
+  evaluation_interval: 1s
+
+remote_write:
+#  - url: 'http://vminsert:8080/insert/1m/1/auth-token-here/prometheus/'
+  - url: http://victoriametrics:8428/api/v1/write
+    queue_config:
+      max_samples_per_send: 10000
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'vm'
+    static_configs:
+      - targets: ['victoriametrics:8428']
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']

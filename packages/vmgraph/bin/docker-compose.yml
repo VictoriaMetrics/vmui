@@ -1,0 +1,49 @@
+version: '3.5'
+services:
+  victoriametrics:
+    container_name: vm
+    image: valyala/victoria-metrics
+    ports:
+      - 8428:8428
+    volumes:
+      - ./victoriametrics-data:/victoria-metrics-data
+    networks:
+      - victoriametrics-net
+    user: ${USE_UID}
+    restart: always
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    depends_on:
+      - "victoriametrics"
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#      - '--storage.tsdb.path=/prometheus'
+#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+#      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - victoriametrics-net
+    user: ${USE_UID}
+    restart: always
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - victoriametrics-net
+    user: ${USE_UID}
+    restart: always
+
+#volumes:
+#  prometheus-data: {}
+#  victoriametrics-data: {}
+networks:
+  victoriametrics-net:
+    driver: bridge
