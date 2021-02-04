@@ -9,12 +9,12 @@ import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
 
 export type DisplayType = "table" | "chart" | "code";
 
-interface DisplayTypeSwitch {
+interface DisplayTypeSwitchProps {
   type: DisplayType;
   setType: (type: DisplayType) => void;
 }
 
-export const DisplayTypeSwitch: FC<DisplayTypeSwitch> = ({type, setType}) => {
+export const DisplayTypeSwitch: FC<DisplayTypeSwitchProps> = ({type, setType}) => {
 
   return <Box>
     <ToggleButtonGroup

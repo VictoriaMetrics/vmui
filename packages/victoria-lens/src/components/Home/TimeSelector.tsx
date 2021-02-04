@@ -1,43 +1,103 @@
 import React, {FC, useEffect, useState} from "react";
-import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
-import {getTimeperiodForPreset, TimePreset} from "../../utils/time";
-import {TimeParams} from "../../types";
-import {Box} from "@material-ui/core";
+import {Box, Link, Popover, TextField, Typography} from "@material-ui/core";
+import {TimeDurationPopover} from "./TimeDurationPopover";
 
 interface TimeSelectorProps {
-  period?: TimeParams;
-  setPeriod: (preset: TimeParams) => void;
+  setDuration: (str: string) => void;
+  duration: string;
 }
 
-export const TimeSelector: FC<TimeSelectorProps> = ({period, setPeriod}) => {
+export const TimeSelector: FC<TimeSelectorProps> = ({setDuration, duration}) => {
 
-  const [timePreset, setTimePreset] = useState<TimePreset>(TimePreset.lastHour);
+  const [durationString, setDurationString] = useState<string>(duration);
+
+  const [durationStringFocused, setFocused] = useState(false);
 
   useEffect(() => {
-    setPeriod(getTimeperiodForPreset(timePreset))
-  }, [timePreset])
+    if (!durationStringFocused) {
+      setDuration(durationString);
+    }
+  }, [durationString, durationStringFocused])
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDurationString(event.target.value);
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<Element, MouseEvent>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  // @ts-ignore
   return <Box m={2}>
-    <ToggleButtonGroup
-        value={timePreset}
-        exclusive
-        onChange={
-          (e, val) =>
-              // Toggle Button Group returns null in case of click on selected element, avoiding it
-              setTimePreset(val ?? timePreset)
-        }>
-      <ToggleButton value={TimePreset.last2Min} aria-label="last 2 min">
-        2 min
-      </ToggleButton>
-      <ToggleButton value={TimePreset.last15Min} aria-label="last 15 min">
-        15 min
-      </ToggleButton>
-      <ToggleButton value={TimePreset.lastHour} aria-label="last hour">
-        1 hr
-      </ToggleButton>
-      <ToggleButton value={TimePreset.last24Hours} aria-label="last 24 hours">
-        24 hrs
-      </ToggleButton>
-    </ToggleButtonGroup>
+    <Box>
+      <TextField label="Duration" value={durationString} onChange={handleChange}
+                 fullWidth={true}
+                 onBlur={() => {
+                   setFocused(false);
+                 }}
+                 onFocus={() => {
+                   setFocused(true);
+                 }}
+      />
+    </Box>
+    <Box my={2}>
+      <Typography variant="body2">
+        Possible options<span aria-owns={open ? 'mouse-over-popover' : undefined}
+                              aria-haspopup="true"
+                              style={{cursor: "pointer"}}
+                              onMouseEnter={handlePopoverOpen}
+                              onMouseLeave={handlePopoverClose}>�:&nbsp;</span>
+        <Popover
+            open={open}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            style={{pointerEvents: "none"}} // important
+            onClose={handlePopoverClose}
+            disableRestoreFocus
+        >
+          <TimeDurationPopover/>
+        </Popover>
+        <Link component="button"
+              onClick={() => {
+                setDurationString("2m");
+              }}>
+          2m
+        </Link>,&nbsp;
+        <Link component="button"
+              onClick={() => {
+                setDurationString("15m");
+              }}>
+          15m
+        </Link>,&nbsp;
+        <Link component="button"
+              onClick={() => {
+                setDurationString("1h");
+              }}>
+          1h
+        </Link>,&nbsp;
+        <Link component="button"
+              onClick={() => {
+                setDurationString("1h 30m");
+              }}>
+          1h 30m
+        </Link>
+      </Typography>
+    </Box>
+
   </Box>
 }

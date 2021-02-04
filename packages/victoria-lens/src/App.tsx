@@ -2,7 +2,17 @@ import React, {useEffect, useMemo, useState} from 'react';
 import QueryEditor from "./components/QueryEditor";
 import {InstantMetricResult, MetricResult} from "./api/types";
 import GraphView from "./components/GraphView";
-import {AppBar, Box, Card, CardContent, Grid, TextField, Toolbar, Typography} from "@material-ui/core";
+import {
+  AppBar,
+  Box,
+  Card,
+  CardContent,
+  CircularProgress, Fade,
+  Grid,
+  TextField,
+  Toolbar,
+  Typography
+} from "@material-ui/core";
 import {getQueryRangeUrl, getQueryUrl} from "./api/query-range";
 import {UrlLine} from "./components/Home/UrlLine";
 import {SnackbarProvider} from "./contexts/Snackbar";
@@ -10,10 +20,15 @@ import {DisplayType, DisplayTypeSwitch} from "./components/Home/DisplayTypeSwitc
 import {TimeSelector} from "./components/Home/TimeSelector";
 import TableView from "./components/TableView";
 import {TimeParams} from "./types";
+import {ExecutionControls} from "./components/Home/ExecutionControls";
+import {getTimeperiodForDuration} from "./utils/time";
 
 function App() {
 
   const [type, setType] = useState<DisplayType>("chart");
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [run, setRun] = useState(false);
 
   const [server, setServer] = useState("http://127.0.0.1:8428");
   const [query, setQuery] = useState("rate(\n\t\tvm_cache_size_bytes[5m]\n)");
@@ -22,6 +37,8 @@ function App() {
   const [liveData, setLiveData] = useState<InstantMetricResult[]>();
 
   const [period, setPeriod] = useState<TimeParams>();
+  const [duration, setDuration] = useState<string>("1h");
+
 
   // TODO: this should depend on query as well, but need to decide when to do the request.
   //       Doing it on each query change - looks to be a bad idea. Probably can be done on blur
@@ -32,11 +49,12 @@ function App() {
               : getQueryUrl(server, query, period)
         }
       },
-      [server, period, type])
+      [server, period, type, run])
 
   useEffect(() => {
     (async () => {
       if (fetchUrl) {
+        setIsLoading(true);
         let response = await fetch(fetchUrl);
         if (response.ok) {
           const resp = await response.json();
@@ -44,9 +62,18 @@ function App() {
         } else {
           alert((await response.json())?.error);
         }
+        setIsLoading(false);
       }
     })()
   }, [fetchUrl, type]);
+
+  const onRunHandler = () => {
+    setRun(prev => !prev); // TODO: be smarter than that
+  }
+
+  useEffect(() => {
+    setPeriod(getTimeperiodForDuration(duration))
+  }, [duration, run])
 
   return (
       <SnackbarProvider>
@@ -89,14 +116,15 @@ function App() {
                           height: "calc(100% - 18px)",
                           marginTop: "16px"
                         }}>
-                          <TimeSelector setPeriod={setPeriod} period={period}/>
+                          <TimeSelector setDuration={setDuration} duration={duration}/>
                         </Box>
                       </Grid>
                     </Grid>
                   </Box>
 
 
-                  <Box display="flex" justifyContent="flex-end">
+                  <Box display="flex" justifyContent="space-between">
+                    <ExecutionControls onRun={onRunHandler}/>
                     <DisplayTypeSwitch type={type} setType={setType}/>
                   </Box>
 
@@ -108,12 +136,26 @@ function App() {
           <UrlLine url={fetchUrl}/>
 
           <Grid item xs={12}>
-            <Box p={2}>
+            {isLoading && <Fade in={isLoading} style={{
+              transitionDelay: isLoading ? '300ms' : '0ms',
+            }}>
+                <Box alignItems="center" flexDirection="column" display="flex"
+                                     style={{
+                                       width: "100%",
+                                       position: "absolute",
+                                       height: "150px",
+                                       background: "linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.7), rgba(255,255,255,0))"
+                                     }} m={2}>
+                  <CircularProgress/>
+                </Box>
+              </Fade>}
+            {<Box p={2}>
               {graphData && period && (type === "chart") &&
               <GraphView data={graphData} timePresets={period}></GraphView>}
               {liveData && (type === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
               {liveData && (type === "table") && <TableView data={liveData}/>}
-            </Box>
+            </Box>}
+
           </Grid>
         </Grid>
       </SnackbarProvider>
