@@ -1,4 +1,4 @@
-import React, {createContext, FC, useContext, useEffect, useState} from 'react';
+import React, {createContext, FC, useContext, useEffect, useState} from "react";
 import {Snackbar} from "@material-ui/core";
 import {Alert} from "@material-ui/lab";
 
@@ -9,11 +9,15 @@ export interface SnackModel {
   key?: number;
 }
 
-export const SnackbarContext = createContext<{ showInfoMessage: (value: string) => void }>({
-  showInfoMessage: () => {}
+type SnackbarContextType = { showInfoMessage: (value: string) => void };
+
+export const SnackbarContext = createContext<SnackbarContextType>({
+  showInfoMessage: () => {
+    // TODO: default value here makes no sense
+  }
 });
 
-export const useSnack = () => useContext(SnackbarContext);
+export const useSnack = (): SnackbarContextType => useContext(SnackbarContext);
 
 export const SnackbarProvider: FC = ({children}) => {
   const [snack, setSnack] = useState<SnackModel>({});
@@ -29,9 +33,9 @@ export const SnackbarProvider: FC = ({children}) => {
       });
       setOpen(true);
     }
-  }, [infoMessage])
+  }, [infoMessage]);
 
-  const handleClose = (event?: React.SyntheticEvent, reason?: string): void => {
+  const handleClose = (): void => {
     setInfoMessage(undefined);
     setOpen(false);
   };
@@ -43,7 +47,7 @@ export const SnackbarProvider: FC = ({children}) => {
       </Alert>
     </Snackbar>
     {children}
-  </SnackbarContext.Provider>
-}
+  </SnackbarContext.Provider>;
+};
 
 

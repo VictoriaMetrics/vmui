@@ -18,13 +18,13 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, 
   const [currentActivePoint, setCurrentActivePoint] = useState<InteractionType>();
   const [isBrushed, setIsBrushed] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any,react-hooks/exhaustive-deps,@typescript-eslint/explicit-function-return-type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-function-return-type
   function brushEnded(this: any, event: any) {
     const selection = event.selection;
     if (selection) {
       const interval = timeDay.every(1);
       if (!event.sourceEvent) return; // see comment in brushstarted
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line
       // @ts-ignore
       const [x0, x1] = selection.map((d) => interval.round(xScale.invert(d)));
       d3Select(this)
@@ -91,8 +91,10 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, 
   }, [resetBrushHandler]);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const bisect = bisector((d: AggregatedDataSet) => new Date(d.key)).left;
     const defineActivePoint = (mx: number): void => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const date = xScale.invert(mx); // date is a Date object
       // const index = bisect(dataForChart, date, 1);
       // const leftPointKey = dataForChart[index - 1].key; // "01/01/2020"
@@ -123,7 +125,7 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, 
   }, [currentActivePoint, onInteraction]);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     brush && xScale && d3Select(refBrush.current).call(brush);
   }, [xScale, brush]);

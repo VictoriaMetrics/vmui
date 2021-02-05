@@ -1,8 +1,6 @@
 export interface MetricBase {
   metric: {
-    instance: string;
-    job: string;
-    type: string;
+    [key: string]: string;
   };
 }
 

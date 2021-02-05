@@ -1,7 +1,8 @@
 import {TimeParams} from "../types";
 
 import * as dayjs from "dayjs";
-import duration from 'dayjs/plugin/duration';
+import duration from "dayjs/plugin/duration";
+import {UnitTypeShort} from "dayjs";
 
 dayjs.extend(duration);
 
@@ -16,17 +17,17 @@ export const getTimeperiodForPreset = (p: TimePreset): TimeParams => {
   const n = (new Date()).valueOf() / 1000;
   let delta = 0;
   switch (p) {
-    case TimePreset.last2Min:
-      delta = 60 * 2;
-      break;
-    case TimePreset.last15Min:
-      delta = 60 * 15;
-      break;
-    case TimePreset.lastHour:
-      delta = 60 * 60;
-      break;
-    case TimePreset.last24Hours:
-      delta = 60 * 60 * 24;
+  case TimePreset.last2Min:
+    delta = 60 * 2;
+    break;
+  case TimePreset.last15Min:
+    delta = 60 * 15;
+    break;
+  case TimePreset.lastHour:
+    delta = 60 * 60;
+    break;
+  case TimePreset.last24Hours:
+    delta = 60 * 60 * 24;
   }
 
   const MAX_ITEMS_PER_CHART = 300; // TODO: make dependent from screen size
@@ -34,8 +35,8 @@ export const getTimeperiodForPreset = (p: TimePreset): TimeParams => {
     start: n - delta,
     end: n,
     step: delta / MAX_ITEMS_PER_CHART
-  }
-}
+  };
+};
 
 export const supportedDurations = [
   {long: "days", short: "d", possible: "day"},
@@ -48,22 +49,19 @@ export const supportedDurations = [
   {long: "milliseconds", short: "ms", possible: "millisecond"}
 ];
 
-export const isSupportedDuration = (str: string): object | undefined => {
+const shortDurations = supportedDurations.map(d => d.short);
+
+export const isSupportedDuration = (str: string): Partial<Record<UnitTypeShort, string>> | undefined => {
 
   const digits = str.match(/\d+/g);
   const words = str.match(/[a-zA-Z]+/g);
 
-  const shortDurations = supportedDurations.map(d => d.short);
-  const possibleDurations = supportedDurations.map(d => d.short);
-
   if (words && digits && shortDurations.includes(words[0])) {
-    return {[words[0]]: digits[0]}
+    return {[words[0]]: digits[0]};
   }
+};
 
-
-}
-
-export const getTimeperiodForDuration = (dur: string) => {
+export const getTimeperiodForDuration = (dur: string): TimeParams => {
   const n = (new Date()).valueOf() / 1000;
 
   const durItems = dur.trim().split(" ");
@@ -75,13 +73,13 @@ export const getTimeperiodForDuration = (dur: string) => {
       return {
         ...prev,
         ...dur
-      }
+      };
     } else {
       return {
         ...prev
-      }
+      };
     }
-  }, {})
+  }, {});
 
   const delta = dayjs.duration(durObject).asSeconds();
 
@@ -90,5 +88,5 @@ export const getTimeperiodForDuration = (dur: string) => {
     start: n - delta,
     end: n,
     step: delta / MAX_ITEMS_PER_CHART
-  }
-}
+  };
+};

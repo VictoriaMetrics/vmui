@@ -37,5 +37,5 @@ export const UrlLine: FC<UrlLineProps> = ({url}) => {
         }}>Copy Query Url</Button>
       </Box>
     </Box>
-  </Grid>
-}
+  </Grid>;
+};

@@ -12,7 +12,7 @@ export const AxisBottom: React.FC<AxisBottomI> = ({xScale, height}) => {
 
   useEffect(() => {
     d3Select(ref.current)
-      .call(axisBottom<Date>(xScale))
+      .call(axisBottom<Date>(xScale));
   }, [xScale]);
   return <g ref={ref} className="x axis" transform={`translate(0, ${height})`} />;
 };
