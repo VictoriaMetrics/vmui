@@ -1,7 +1,7 @@
-import React, {FC, useMemo, useState} from "react";
+import React, {FC, useEffect, useMemo, useState} from "react";
 import {MetricResult} from "../api/types";
 
-import {scaleOrdinal, schemeSet2} from "d3";
+import {scaleOrdinal, schemeCategory10} from "d3";
 
 import {LineChart} from "./LineChart/LineChart";
 import {DataSeries, TimeParams} from "../types";
@@ -33,7 +33,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
   const color = useMemo(() =>
       scaleOrdinal<string>()
         .domain(seriesNames) // associate series names with colors
-        .range(schemeSet2), [seriesNames])
+        .range(schemeCategory10), [seriesNames])
 
   const initLabels = useMemo(() => {
     return seriesNames.map(name => ({
@@ -44,6 +44,10 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
   }, [color, seriesNames])
 
   const [labels, setLabels] = useState(initLabels);
+
+  useEffect(() => {
+    setLabels(initLabels)
+  }, [initLabels])
 
   const visibleNames = useMemo(() => labels.filter(l => l.checked).map(l => l.label), [labels]);
 

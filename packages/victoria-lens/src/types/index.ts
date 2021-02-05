@@ -18,11 +18,6 @@ export interface DataSeries {
 
 
 export interface InstantDataSeries {
-  metadata: {
-    name: string;
-    instance: string;
-    job: string;
-    type: string;
-  }
+  metadata: string[]; // just ordered columns
   value: string;
 }
