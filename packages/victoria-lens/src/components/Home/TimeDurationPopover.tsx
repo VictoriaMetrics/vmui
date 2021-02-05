@@ -14,12 +14,12 @@ export const TimeDurationPopover: FC = () => {
       </TableHead>
       <TableBody>
         {supportedDurations.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell component="th" scope="row">{row.long}</TableCell>
-              <TableCell>{row.short}</TableCell>
-            </TableRow>
+          <TableRow key={index}>
+            <TableCell component="th" scope="row">{row.long}</TableCell>
+            <TableCell>{row.short}</TableCell>
+          </TableRow>
         ))}
       </TableBody>
     </Table>
-  </TableContainer>
-}
+  </TableContainer>;
+};

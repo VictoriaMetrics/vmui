@@ -60,10 +60,10 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
               <AxisBottom xScale={xScale} height={svgHeight} />
               <AxisLeft yScale={yScale} label={yAxisLabel} />
               {series.map((s, i) =>
-                  <path stroke={color(s.metadata.name)}
-                        key={i} className="line"
-                        d={getDataLine(s) as string}
-                        clipPath="url(#clip-line)"/>)}
+                <path stroke={color(s.metadata.name)}
+                  key={i} className="line"
+                  d={getDataLine(s) as string}
+                  clipPath="url(#clip-line)"/>)}
             </g>
           </svg>
         </div>
