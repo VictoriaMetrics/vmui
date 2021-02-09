@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useState} from "react";
+import React, {FC, useEffect, useMemo, useReducer, useState} from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -25,33 +25,84 @@ import {TimeParams} from "../../types";
 import {getQueryRangeUrl, getQueryUrl} from "../../api/query-range";
 import {getTimeperiodForDuration} from "../../utils/time";
 
+export interface TimeState {
+  duration: string; // period should be obtained from duration in a selector'ish manner
+}
+
+export interface AppState {
+  serverUrl: string;
+  displayType: DisplayType;
+  query: string;
+  time: TimeState;
+}
+
+type Action =
+    | { type: "SET_DISPLAY_TYPE", payload: DisplayType }
+    | { type: "SET_SERVER", payload: string }
+    | { type: "SET_QUERY", payload: string }
+    | { type: "SET_DURATION", payload: string }
+
+const initialState: AppState = {
+  serverUrl: "http://127.0.0.1:8428",
+  displayType: "chart",
+  query: "rate(\n\t\tvm_cache_size_bytes[5m]\n)",
+  time: {
+    duration: "1h"
+  }
+};
+
+function reducer(state: AppState, action: Action): AppState {
+  switch (action.type) {
+    case "SET_DISPLAY_TYPE":
+      return {
+        ...state,
+        displayType: action.payload
+      };
+    case "SET_SERVER":
+      return {
+        ...state,
+        serverUrl: action.payload
+      };
+    case "SET_QUERY":
+      return {
+        ...state,
+        query: action.payload
+      };
+    case "SET_DURATION":
+      return {
+        ...state,
+        time: {
+          ...state.time,
+          duration: action.payload
+        }
+      };
+    default:
+      throw new Error();
+  }
+}
+
 const HomeLayout: FC = () => {
 
-  const [type, setType] = useState<DisplayType>("chart");
+  const [{serverUrl, displayType, query, time: {duration}}, dispatch] = useReducer(reducer, initialState);
 
   const [isLoading, setIsLoading] = useState(false);
   const [run, setRun] = useState(false);
-
-  const [server, setServer] = useState("http://127.0.0.1:8428");
-  const [query, setQuery] = useState("rate(\n\t\tvm_cache_size_bytes[5m]\n)");
 
   const [graphData, setGraphData] = useState<MetricResult[]>();
   const [liveData, setLiveData] = useState<InstantMetricResult[]>();
 
   const [period, setPeriod] = useState<TimeParams>();
-  const [duration, setDuration] = useState<string>("1h");
-
 
   // TODO: this should depend on query as well, but need to decide when to do the request.
   //       Doing it on each query change - looks to be a bad idea. Probably can be done on blur
   const fetchUrl = useMemo(() => {
     if (period) {
-      return type === "chart"
-        ? getQueryRangeUrl(server, query, period)
-        : getQueryUrl(server, query, period);
+      return displayType === "chart"
+        ? getQueryRangeUrl(serverUrl, query, period)
+        : getQueryUrl(serverUrl, query, period);
     }
   },
-  [server, period, type, run]);
+  [serverUrl, period, displayType, run]);
 
   useEffect(() => {
     (async () => {
@@ -60,14 +111,14 @@ const HomeLayout: FC = () => {
         const response = await fetch(fetchUrl);
         if (response.ok) {
           const resp = await response.json();
-          type === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
+          displayType === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
         } else {
           alert((await response.json())?.error);
         }
         setIsLoading(false);
       }
     })();
-  }, [fetchUrl, type]);
+  }, [fetchUrl, displayType]);
 
   const onRunHandler = () => {
     setRun(prev => !prev); // TODO: be smarter than that
@@ -103,13 +154,13 @@ const HomeLayout: FC = () => {
                   <Grid item xs={12} md={6}>
                     <Box>
                       <Box py={2}>
-                        <TextField variant="outlined" fullWidth label="Server URL" value={server}
+                        <TextField variant="outlined" fullWidth label="Server URL" value={serverUrl}
                           inputProps={{
                             style: {fontFamily: "Monospace"}
                           }}
-                          onChange={(e) => setServer(e.target.value)}/>
+                          onChange={(e) => dispatch({type: "SET_SERVER", payload: e.target.value})}/>
                       </Box>
-                      <QueryEditor server={server} query={query} setQuery={setQuery}/>
+                      <QueryEditor server={serverUrl} query={query} setQuery={(query) => dispatch({type: "SET_QUERY", payload: query})}/>
 
                     </Box>
                   </Grid>
@@ -122,7 +173,7 @@ const HomeLayout: FC = () => {
                       height: "calc(100% - 18px)",
                       marginTop: "16px"
                     }}>
-                      <TimeSelector setDuration={setDuration} duration={duration}/>
+                      <TimeSelector setDuration={(dur) => dispatch({type: "SET_DURATION", payload: dur})} duration={duration}/>
                     </Box>
                   </Grid>
                 </Grid>
@@ -131,7 +182,7 @@ const HomeLayout: FC = () => {
 
             <Box mt={2} display="flex" justifyContent="space-between">
               <ExecutionControls onRun={onRunHandler}/>
-              <DisplayTypeSwitch type={type} setType={setType}/>
+              <DisplayTypeSwitch type={displayType} setType={(type) => {dispatch({type: "SET_DISPLAY_TYPE", payload: type});}}/>
             </Box>
           </Box>
         </Grid>
@@ -153,10 +204,10 @@ const HomeLayout: FC = () => {
             </Box>
           </Fade>}
           {<Box p={2}>
-            {graphData && period && (type === "chart") &&
+            {graphData && period && (displayType === "chart") &&
               <GraphView data={graphData} timePresets={period}></GraphView>}
-            {liveData && (type === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
-            {liveData && (type === "table") && <TableView data={liveData}/>}
+            {liveData && (displayType === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
+            {liveData && (displayType === "table") && <TableView data={liveData}/>}
           </Box>}
 
         </Grid>
