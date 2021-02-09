@@ -29,10 +29,11 @@ export const UrlLine: FC<UrlLineProps> = ({url}) => {
 
       </Box>
       <Box px={2} py={1} flexShrink={0} display="flex">
-        <Button size="small" onClick={() => {
+        <Button size="small" onClick={(e) => {
           if (url) {
             navigator.clipboard.writeText(url);
             showInfoMessage("Value has been copied");
+            e.preventDefault(); // needed to avoid snackbar immediate disappearing
           }
         }}>Copy Query Url</Button>
       </Box>

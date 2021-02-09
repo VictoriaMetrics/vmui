@@ -57,7 +57,7 @@ const HomeLayout: FC = () => {
           </Box>
         </Box>
         <UrlLine url={fetchUrl}/>
-        <Box flexShrink={1} overflow="scroll">
+        <Box flexShrink={1} style={{overflowY: "scroll"}}>
           {isLoading && <Fade in={isLoading} style={{
             transitionDelay: isLoading ? "300ms" : "0ms",
           }}>

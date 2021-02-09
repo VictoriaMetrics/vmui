@@ -19,9 +19,10 @@ const JsonView: FC<JsonViewProps> = ({data}) => {
           position: "fixed",
           right: "16px"
         }}>
-        <Button variant="outlined" onClick={() => {
+        <Button variant="outlined" onClick={(e) => {
           navigator.clipboard.writeText(formattedJson);
           showInfoMessage("Formatted JSON has been copied");
+          e.preventDefault(); // needed to avoid snackbar immediate disappearing
         }}>Copy JSON</Button>
       </Box>
       <pre>{formattedJson}</pre>
