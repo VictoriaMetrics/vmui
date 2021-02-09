@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useReducer, useState} from "react";
+import React, {FC, useEffect, useMemo, useState} from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -16,7 +16,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import QueryEditor from "../QueryEditor";
 import {TimeSelector} from "./TimeSelector";
 import {ExecutionControls} from "./ExecutionControls";
-import {DisplayType, DisplayTypeSwitch} from "./DisplayTypeSwitch";
+import {DisplayTypeSwitch} from "./DisplayTypeSwitch";
 import {UrlLine} from "./UrlLine";
 import GraphView from "../GraphView";
 import TableView from "../TableView";
@@ -24,66 +24,12 @@ import {InstantMetricResult, MetricResult} from "../../api/types";
 import {TimeParams} from "../../types";
 import {getQueryRangeUrl, getQueryUrl} from "../../api/query-range";
 import {getTimeperiodForDuration} from "../../utils/time";
-
-export interface TimeState {
-  duration: string; // period should be obtained from duration in a selector'ish manner
-}
-
-export interface AppState {
-  serverUrl: string;
-  displayType: DisplayType;
-  query: string;
-  time: TimeState;
-}
-
-type Action =
-    | { type: "SET_DISPLAY_TYPE", payload: DisplayType }
-    | { type: "SET_SERVER", payload: string }
-    | { type: "SET_QUERY", payload: string }
-    | { type: "SET_DURATION", payload: string }
-
-const initialState: AppState = {
-  serverUrl: "http://127.0.0.1:8428",
-  displayType: "chart",
-  query: "rate(\n\t\tvm_cache_size_bytes[5m]\n)",
-  time: {
-    duration: "1h"
-  }
-};
-
-function reducer(state: AppState, action: Action): AppState {
-  switch (action.type) {
-    case "SET_DISPLAY_TYPE":
-      return {
-        ...state,
-        displayType: action.payload
-      };
-    case "SET_SERVER":
-      return {
-        ...state,
-        serverUrl: action.payload
-      };
-    case "SET_QUERY":
-      return {
-        ...state,
-        query: action.payload
-      };
-    case "SET_DURATION":
-      return {
-        ...state,
-        time: {
-          ...state.time,
-          duration: action.payload
-        }
-      };
-    default:
-      throw new Error();
-  }
-}
+import {useAppDispatch, useAppState} from "../../state/StateContext";
 
 const HomeLayout: FC = () => {
 
-  const [{serverUrl, displayType, query, time: {duration}}, dispatch] = useReducer(reducer, initialState);
+  const {serverUrl, displayType, query, time: {duration}} = useAppState();
+  const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
   const [run, setRun] = useState(false);

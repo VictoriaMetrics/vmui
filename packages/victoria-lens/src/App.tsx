@@ -1,13 +1,16 @@
 import React, {FC} from "react";
 import {SnackbarProvider} from "./contexts/Snackbar";
 import HomeLayout from "./components/Home/HomeLayout";
+import {StateProvider} from "./state/StateContext";
 
 const App: FC = () => {
 
   return (
-    <SnackbarProvider>
-      <HomeLayout/>
-    </SnackbarProvider>
+    <StateProvider>
+      <SnackbarProvider>
+        <HomeLayout/>
+      </SnackbarProvider>
+    </StateProvider>
   );
 };
 
