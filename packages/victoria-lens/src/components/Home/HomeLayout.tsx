@@ -8,15 +8,12 @@ import {
   CircularProgress,
   Fade,
   Grid,
-  TextField,
   Toolbar,
   Typography
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import QueryEditor from "../QueryEditor";
-import {TimeSelector} from "./TimeSelector";
-import {ExecutionControls} from "./ExecutionControls";
-import {DisplayTypeSwitch} from "./DisplayTypeSwitch";
+import {ExecutionControls} from "./Configurator/ExecutionControls";
+import {DisplayTypeSwitch} from "./Configurator/DisplayTypeSwitch";
 import {UrlLine} from "./UrlLine";
 import GraphView from "../GraphView";
 import TableView from "../TableView";
@@ -25,6 +22,7 @@ import {TimeParams} from "../../types";
 import {getQueryRangeUrl, getQueryUrl} from "../../api/query-range";
 import {getTimeperiodForDuration} from "../../utils/time";
 import {useAppDispatch, useAppState} from "../../state/StateContext";
+import QueryConfigurator from "./Configurator/QueryConfigurator";
 
 const HomeLayout: FC = () => {
 
@@ -96,33 +94,7 @@ const HomeLayout: FC = () => {
                 <Typography variant="h6" component="h2">Query Configuration</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <Box>
-                      <Box py={2}>
-                        <TextField variant="outlined" fullWidth label="Server URL" value={serverUrl}
-                          inputProps={{
-                            style: {fontFamily: "Monospace"}
-                          }}
-                          onChange={(e) => dispatch({type: "SET_SERVER", payload: e.target.value})}/>
-                      </Box>
-                      <QueryEditor server={serverUrl} query={query} setQuery={(query) => dispatch({type: "SET_QUERY", payload: query})}/>
-
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Box style={{
-                      borderRadius: "4px",
-                      borderColor: "#b9b9b9",
-                      borderStyle: "solid",
-                      borderWidth: "1px",
-                      height: "calc(100% - 18px)",
-                      marginTop: "16px"
-                    }}>
-                      <TimeSelector setDuration={(dur) => dispatch({type: "SET_DURATION", payload: dur})} duration={duration}/>
-                    </Box>
-                  </Grid>
-                </Grid>
+                <QueryConfigurator/>
               </AccordionDetails>
             </Accordion>
 

@@ -1,4 +1,4 @@
-import {DisplayType} from "../components/Home/DisplayTypeSwitch";
+import {DisplayType} from "../components/Home/Configurator/DisplayTypeSwitch";
 
 export interface TimeState {
   duration: string; // period should be obtained from duration in a selector'ish manner

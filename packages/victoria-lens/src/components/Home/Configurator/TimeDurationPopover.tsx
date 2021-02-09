@@ -1,6 +1,6 @@
 import React, {FC} from "react";
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
-import {supportedDurations} from "../../utils/time";
+import {supportedDurations} from "../../../utils/time";
 
 export const TimeDurationPopover: FC = () => {
 

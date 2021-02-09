@@ -73,14 +73,14 @@ export const ExecutionControls: FC<Props> = ({onRun}) => {
   const iterateDelays = () => {
     setDelay(prev => {
       switch (prev) {
-      case 1:
-        return 2;
-      case 2:
-        return 5;
-      case 5:
-        return 1;
-      default:
-        return 5;
+        case 1:
+          return 2;
+        case 2:
+          return 5;
+        case 5:
+          return 1;
+        default:
+          return 5;
       }
     });
   };
