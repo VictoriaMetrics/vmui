@@ -5,23 +5,22 @@ import ShowChartIcon from "@material-ui/icons/ShowChart";
 import CodeIcon from "@material-ui/icons/Code";
 
 import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
+import {useAppDispatch, useAppState} from "../../../state/StateContext";
 
 export type DisplayType = "table" | "chart" | "code";
 
-interface DisplayTypeSwitchProps {
-  type: DisplayType;
-  setType: (type: DisplayType) => void;
-}
+export const DisplayTypeSwitch: FC = () => {
 
-export const DisplayTypeSwitch: FC<DisplayTypeSwitchProps> = ({type, setType}) => {
+  const {displayType} = useAppState();
+  const dispatch = useAppDispatch();
 
   return <ToggleButtonGroup
-    value={type}
+    value={displayType}
     exclusive
     onChange={
       (e, val) =>
       // Toggle Button Group returns null in case of click on selected element, avoiding it
-        setType(val ?? type)
+        dispatch({type: "SET_DISPLAY_TYPE", payload: val ?? displayType})
     }>
     <ToggleButton value="chart" aria-label="display as chart">
       <ShowChartIcon/>&nbsp;Query Range as Chart

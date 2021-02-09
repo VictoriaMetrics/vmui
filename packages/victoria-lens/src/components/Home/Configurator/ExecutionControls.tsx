@@ -5,6 +5,7 @@ import CircularProgress, {CircularProgressProps} from "@material-ui/core/Circula
 import Typography from "@material-ui/core/Typography";
 
 import EqualizerIcon from "@material-ui/icons/Equalizer";
+import {useAppDispatch} from "../../../state/StateContext";
 
 function CircularProgressWithLabel(props: CircularProgressProps & { label: number }) {
   return (
@@ -26,10 +27,9 @@ function CircularProgressWithLabel(props: CircularProgressProps & { label: numbe
   );
 }
 
-interface Props {
-  onRun: ()=>void;
-}
-export const ExecutionControls: FC<Props> = ({onRun}) => {
+export const ExecutionControls: FC = () => {
+
+  const dispatch = useAppDispatch();
 
   const [delay, setDelay] = useState<(1|2|5)>(5);
 
@@ -49,7 +49,7 @@ export const ExecutionControls: FC<Props> = ({onRun}) => {
       setLastUpdate(new Date().valueOf());
       timer = setInterval(() => {
         setLastUpdate(new Date().valueOf());
-        onRun();
+        dispatch({type: "RUN_QUERY"});
       }, delay * 1000) as unknown as number;
     }
     return () => {
@@ -87,7 +87,7 @@ export const ExecutionControls: FC<Props> = ({onRun}) => {
 
   return <Box display="flex" alignItems="center">
     <Box mr={2}>
-      <IconButton onClick={()=>onRun()}>
+      <IconButton onClick={()=>dispatch({type: "RUN_QUERY"})}>
         <PlayCircleOutlineIcon fontSize="large"/>
       </IconButton>
     </Box>

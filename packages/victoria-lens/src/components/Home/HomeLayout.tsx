@@ -18,24 +18,18 @@ import {UrlLine} from "./UrlLine";
 import GraphView from "../GraphView";
 import TableView from "../TableView";
 import {InstantMetricResult, MetricResult} from "../../api/types";
-import {TimeParams} from "../../types";
 import {getQueryRangeUrl, getQueryUrl} from "../../api/query-range";
-import {getTimeperiodForDuration} from "../../utils/time";
-import {useAppDispatch, useAppState} from "../../state/StateContext";
+import {useAppState} from "../../state/StateContext";
 import QueryConfigurator from "./Configurator/QueryConfigurator";
 
 const HomeLayout: FC = () => {
 
-  const {serverUrl, displayType, query, time: {duration}} = useAppState();
-  const dispatch = useAppDispatch();
+  const {serverUrl, displayType, query, time: {period}} = useAppState();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [run, setRun] = useState(false);
 
   const [graphData, setGraphData] = useState<MetricResult[]>();
   const [liveData, setLiveData] = useState<InstantMetricResult[]>();
-
-  const [period, setPeriod] = useState<TimeParams>();
 
   // TODO: this should depend on query as well, but need to decide when to do the request.
   //       Doing it on each query change - looks to be a bad idea. Probably can be done on blur
@@ -46,7 +40,7 @@ const HomeLayout: FC = () => {
         : getQueryUrl(serverUrl, query, period);
     }
   },
-  [serverUrl, period, displayType, run]);
+  [serverUrl, period, displayType]);
 
   useEffect(() => {
     (async () => {
@@ -63,14 +57,6 @@ const HomeLayout: FC = () => {
       }
     })();
   }, [fetchUrl, displayType]);
-
-  const onRunHandler = () => {
-    setRun(prev => !prev); // TODO: be smarter than that
-  };
-
-  useEffect(() => {
-    setPeriod(getTimeperiodForDuration(duration));
-  }, [duration, run]);
 
   return (
     <>
@@ -99,8 +85,8 @@ const HomeLayout: FC = () => {
             </Accordion>
 
             <Box mt={2} display="flex" justifyContent="space-between">
-              <ExecutionControls onRun={onRunHandler}/>
-              <DisplayTypeSwitch type={displayType} setType={(type) => {dispatch({type: "SET_DISPLAY_TYPE", payload: type});}}/>
+              <ExecutionControls/>
+              <DisplayTypeSwitch/>
             </Box>
           </Box>
         </Grid>
