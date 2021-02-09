@@ -14,11 +14,10 @@ const JsonView: FC<JsonViewProps> = ({data}) => {
 
   return (
     <Box position="relative">
-      <Box flexDirection="column" display="flex"
+      <Box flexDirection="column" justifyContent="flex-end" display="flex"
         style={{
-          position: "absolute",
-          top: "0",
-          right: "0"
+          position: "fixed",
+          right: "16px"
         }}>
         <Button variant="outlined" onClick={() => {
           navigator.clipboard.writeText(formattedJson);

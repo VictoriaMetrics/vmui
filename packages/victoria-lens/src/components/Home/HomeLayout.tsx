@@ -7,7 +7,6 @@ import {
   Box,
   CircularProgress,
   Fade,
-  Grid,
   Toolbar,
   Typography
 } from "@material-ui/core";
@@ -37,33 +36,28 @@ const HomeLayout: FC = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Grid container spacing={0}>
-        <Grid item xs={12}>
-          <Box m={2}>
+      <Box display="flex" flexDirection="column" style={{height: "calc(100vh - 64px)"}}>
+        <Box m={2}>
+          <Accordion defaultExpanded={true}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon/>}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography variant="h6" component="h2">Query Configuration</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <QueryConfigurator/>
+            </AccordionDetails>
+          </Accordion>
 
-            <Accordion defaultExpanded={true}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon/>}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography variant="h6" component="h2">Query Configuration</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <QueryConfigurator/>
-              </AccordionDetails>
-            </Accordion>
-
-            <Box mt={2} display="flex" justifyContent="space-between">
-              <ExecutionControls/>
-              <DisplayTypeSwitch/>
-            </Box>
+          <Box mt={2} display="flex" justifyContent="space-between">
+            <ExecutionControls/>
+            <DisplayTypeSwitch/>
           </Box>
-        </Grid>
-
+        </Box>
         <UrlLine url={fetchUrl}/>
-
-        <Grid item xs={12}>
+        <Box flexShrink={1} overflow="scroll">
           {isLoading && <Fade in={isLoading} style={{
             transitionDelay: isLoading ? "300ms" : "0ms",
           }}>
@@ -83,8 +77,8 @@ const HomeLayout: FC = () => {
             {liveData && (displayType === "code") && <JsonView data={liveData}/>}
             {liveData && (displayType === "table") && <TableView data={liveData}/>}
           </Box>}
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </>
   );
 };
