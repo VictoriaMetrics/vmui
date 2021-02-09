@@ -1,12 +1,12 @@
 import React, {FC, useEffect, useMemo, useState} from "react";
-import {MetricResult} from "../api/types";
+import {MetricResult} from "../../../api/types";
 
 import {scaleOrdinal, schemeCategory10} from "d3";
 
-import {LineChart} from "./LineChart/LineChart";
-import {DataSeries, TimeParams} from "../types";
-import {getNameForMetric} from "../utils/metric";
-import {Legend, LegendItem} from "./Legend/Legend";
+import {LineChart} from "../../LineChart/LineChart";
+import {DataSeries, TimeParams} from "../../../types";
+import {getNameForMetric} from "../../../utils/metric";
+import {Legend, LegendItem} from "../../Legend/Legend";
 
 export interface GraphViewProps {
   data: MetricResult[];

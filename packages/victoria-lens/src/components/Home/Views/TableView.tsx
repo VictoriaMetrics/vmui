@@ -1,6 +1,6 @@
 import React, {FC, useMemo} from "react";
-import {InstantMetricResult} from "../api/types";
-import {InstantDataSeries} from "../types";
+import {InstantMetricResult} from "../../../api/types";
+import {InstantDataSeries} from "../../../types";
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 

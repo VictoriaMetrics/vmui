@@ -15,11 +15,12 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {ExecutionControls} from "./Configurator/ExecutionControls";
 import {DisplayTypeSwitch} from "./Configurator/DisplayTypeSwitch";
 import {UrlLine} from "./UrlLine";
-import GraphView from "../GraphView";
-import TableView from "../TableView";
+import GraphView from "./Views/GraphView";
+import TableView from "./Views/TableView";
 import {useAppState} from "../../state/StateContext";
 import QueryConfigurator from "./Configurator/QueryConfigurator";
 import {useFetchQuery} from "./Configurator/useFetchQuery";
+import JsonView from "./Views/JsonView";
 
 const HomeLayout: FC = () => {
 
@@ -79,7 +80,7 @@ const HomeLayout: FC = () => {
           {<Box p={2}>
             {graphData && period && (displayType === "chart") &&
               <GraphView data={graphData} timePresets={period}></GraphView>}
-            {liveData && (displayType === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
+            {liveData && (displayType === "code") && <JsonView data={liveData}/>}
             {liveData && (displayType === "table") && <TableView data={liveData}/>}
           </Box>}
         </Grid>

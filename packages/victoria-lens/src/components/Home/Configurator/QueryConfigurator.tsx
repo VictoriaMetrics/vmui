@@ -1,6 +1,6 @@
 import React, {FC} from "react";
 import {Box, Grid, TextField} from "@material-ui/core";
-import QueryEditor from "../../QueryEditor";
+import QueryEditor from "./QueryEditor";
 import {TimeSelector} from "./TimeSelector";
 import {useAppDispatch, useAppState} from "../../../state/StateContext";
 
