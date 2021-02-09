@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useState} from "react";
+import React, {FC} from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -17,46 +17,15 @@ import {DisplayTypeSwitch} from "./Configurator/DisplayTypeSwitch";
 import {UrlLine} from "./UrlLine";
 import GraphView from "../GraphView";
 import TableView from "../TableView";
-import {InstantMetricResult, MetricResult} from "../../api/types";
-import {getQueryRangeUrl, getQueryUrl} from "../../api/query-range";
 import {useAppState} from "../../state/StateContext";
 import QueryConfigurator from "./Configurator/QueryConfigurator";
+import {useFetchQuery} from "./Configurator/useFetchQuery";
 
 const HomeLayout: FC = () => {
 
-  const {serverUrl, displayType, query, time: {period}} = useAppState();
+  const {displayType, time: {period}} = useAppState();
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [graphData, setGraphData] = useState<MetricResult[]>();
-  const [liveData, setLiveData] = useState<InstantMetricResult[]>();
-
-  // TODO: this should depend on query as well, but need to decide when to do the request.
-  //       Doing it on each query change - looks to be a bad idea. Probably can be done on blur
-  const fetchUrl = useMemo(() => {
-    if (period) {
-      return displayType === "chart"
-        ? getQueryRangeUrl(serverUrl, query, period)
-        : getQueryUrl(serverUrl, query, period);
-    }
-  },
-  [serverUrl, period, displayType]);
-
-  useEffect(() => {
-    (async () => {
-      if (fetchUrl) {
-        setIsLoading(true);
-        const response = await fetch(fetchUrl);
-        if (response.ok) {
-          const resp = await response.json();
-          displayType === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
-        } else {
-          alert((await response.json())?.error);
-        }
-        setIsLoading(false);
-      }
-    })();
-  }, [fetchUrl, displayType]);
+  const {fetchUrl, isLoading, liveData, graphData} = useFetchQuery();
 
   return (
     <>
@@ -113,7 +82,6 @@ const HomeLayout: FC = () => {
             {liveData && (displayType === "code") && <pre>{JSON.stringify(liveData, null, 2)}</pre>}
             {liveData && (displayType === "table") && <TableView data={liveData}/>}
           </Box>}
-
         </Grid>
       </Grid>
     </>

@@ -1,3 +1,4 @@
+/* eslint max-lines: ["error", {"max": 200}] */ // Complex D3 logic here - file can be larger
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {bisector, brushX, pointer as d3Mouse, ScaleLinear, ScaleTime, select as d3Select, timeDay} from "d3";
 import {AggregatedDataSet} from "./model";

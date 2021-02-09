@@ -1,42 +1,18 @@
 import React, {FC, useEffect, useState} from "react";
 import {Box, FormControlLabel, IconButton, Switch} from "@material-ui/core";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
-import CircularProgress, {CircularProgressProps} from "@material-ui/core/CircularProgress";
-import Typography from "@material-ui/core/Typography";
 
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import {useAppDispatch} from "../../../state/StateContext";
-
-function CircularProgressWithLabel(props: CircularProgressProps & { label: number }) {
-  return (
-    <Box position="relative" display="inline-flex">
-      <CircularProgress variant="determinate" {...props} />
-      <Box
-        top={0}
-        left={0}
-        bottom={0}
-        right={0}
-        position="absolute"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Typography variant="caption" component="div" color="textSecondary">{`${props.label}s`}</Typography>
-      </Box>
-    </Box>
-  );
-}
+import CircularProgressWithLabel from "../../common/CircularProgressWithLabel";
 
 export const ExecutionControls: FC = () => {
 
   const dispatch = useAppDispatch();
 
   const [delay, setDelay] = useState<(1|2|5)>(5);
-
   const [lastUpdate, setLastUpdate] = useState<number|undefined>();
-
   const [progress, setProgress] = React.useState(100);
-
   const [checked, setChecked] = React.useState(false);
 
   const handleChange = () => {

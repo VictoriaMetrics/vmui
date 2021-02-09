@@ -10,8 +10,8 @@ interface TimeSelectorProps {
 export const TimeSelector: FC<TimeSelectorProps> = ({setDuration, duration}) => {
 
   const [durationString, setDurationString] = useState<string>(duration);
-
   const [durationStringFocused, setFocused] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 
   useEffect(() => {
     if (!durationStringFocused) {
@@ -23,8 +23,6 @@ export const TimeSelector: FC<TimeSelectorProps> = ({setDuration, duration}) => 
     setDurationString(event.target.value);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-
   const handlePopoverOpen = (event: React.MouseEvent<Element, MouseEvent>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -35,8 +33,6 @@ export const TimeSelector: FC<TimeSelectorProps> = ({setDuration, duration}) => 
 
   const open = Boolean(anchorEl);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return <Box m={2}>
     <Box>
       <TextField label="Duration" value={durationString} onChange={handleChange}
