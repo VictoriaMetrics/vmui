@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from "react";
-import {line as d3Line, max as d3Max, scaleLinear, ScaleOrdinal, scaleTime} from "d3";
+import {line as d3Line, max as d3Max, min as d3Min, scaleLinear, ScaleOrdinal, scaleTime} from "d3";
 import "./line-chart.css";
 import Measure from "react-measure";
 import {AxisBottom} from "./AxisBottom";
@@ -27,11 +27,15 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const yAxisLabel = ""; // TODO: label
 
   const yScale = useMemo(
-    () =>
-      scaleLinear()
-        .domain([0, d3Max(series.reduce((acc: DataValue[], next: DataSeries) => [...acc, ...next.values], []), (_) => _.value) || 1]) // input
+    () => {
+      const seriesValues = series.reduce((acc: DataValue[], next: DataSeries) => [...acc, ...next.values], []).map(_ => _.value);
+      const max = d3Max(seriesValues) ?? 1; // || 1 will cause one additional tick if max is 0
+      const min = d3Min(seriesValues) || 0;
+      return scaleLinear()
+        .domain([min > 0 ? 0 : min, max < 0 ? 0 : max]) // input
         .range([svgHeight, 0])
-        .nice(),
+        .nice();
+    },
     [series, svgHeight]
   );
 
@@ -54,7 +58,8 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
               <defs>
                 {/*Clip path helps to clip the line*/}
                 <clipPath id="clip-line">
-                  <rect width={xScale.range()[1]} height={yScale.range()[0]} />
+                  {/*Transforming and adding size to clip-path in order to avoid clipping of chart elements*/}
+                  <rect transform={"translate(0, -2)"} width={xScale.range()[1] + 4} height={yScale.range()[0] + 2} />
                 </clipPath>
               </defs>
               <AxisBottom xScale={xScale} height={svgHeight} />

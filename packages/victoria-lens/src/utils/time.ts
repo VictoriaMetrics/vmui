@@ -13,6 +13,8 @@ export enum TimePreset {
   "last24Hours"
 }
 
+const MAX_ITEMS_PER_CHART = 300; // TODO: make dependent from screen size
+
 export const getTimeperiodForPreset = (p: TimePreset): TimeParams => {
   const n = (new Date()).valueOf() / 1000;
   let delta = 0;
@@ -30,7 +32,6 @@ export const getTimeperiodForPreset = (p: TimePreset): TimeParams => {
       delta = 60 * 60 * 24;
   }
 
-  const MAX_ITEMS_PER_CHART = 300; // TODO: make dependent from screen size
   return {
     start: n - delta,
     end: n,
@@ -83,7 +84,6 @@ export const getTimeperiodForDuration = (dur: string): TimeParams => {
 
   const delta = dayjs.duration(durObject).asSeconds();
 
-  const MAX_ITEMS_PER_CHART = 300; // TODO: make dependent from screen size
   return {
     start: n - delta,
     end: n,
