@@ -13,7 +13,7 @@ export enum TimePreset {
   "last24Hours"
 }
 
-const MAX_ITEMS_PER_CHART = 300; // TODO: make dependent from screen size
+const MAX_ITEMS_PER_CHART = 100; // TODO: make dependent from screen size
 
 export const getTimeperiodForPreset = (p: TimePreset): TimeParams => {
   const n = (new Date()).valueOf() / 1000;

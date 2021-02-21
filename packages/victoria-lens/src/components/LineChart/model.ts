@@ -1,5 +1,5 @@
 export type AggregatedDataSet = {
-  key: string;
+  key: number;
   value: aggregatedDataValue;
 };
 export type aggregatedDataValue = {[key: string]: number};

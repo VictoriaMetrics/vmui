@@ -1,19 +1,17 @@
-/* eslint max-lines: ["error", {"max": 200}] */ // Complex D3 logic here - file can be larger
+/* eslint max-lines: ["error", {"max": 200}] */    // Complex D3 logic here - file can be larger
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {bisector, brushX, pointer as d3Mouse, ScaleLinear, ScaleTime, select as d3Select, timeDay} from "d3";
-import {AggregatedDataSet} from "./model";
-import {DataValue} from "../../types";
+import {bisector, brushX, pointer as d3Pointer, ScaleLinear, ScaleTime, select as d3Select, timeDay} from "d3";
 
 export type InteractionType = number | [number, number]; // timestamp is single date and 2 timestamps for period
 
 interface LineI {
   yScale: ScaleLinear<number, number>;
   xScale: ScaleTime<number, number>;
-  dataForChart: DataValue[];
-  onInteraction: (key: InteractionType | undefined) => void; // key is "01/01/2020". undefined means no interaction
+  datesInChart: Date[];
+  onInteraction: (key: InteractionType | undefined) => void; // key is index. undefined means no interaction
 }
 
-export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, onInteraction}) => {
+export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, onInteraction}) => {
   const refBrush = useRef<SVGGElement>(null);
 
   const [currentActivePoint, setCurrentActivePoint] = useState<InteractionType>();
@@ -92,34 +90,26 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, 
   }, [resetBrushHandler]);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const bisect = bisector((d: AggregatedDataSet) => new Date(d.key)).left;
+    const bisect = bisector((d: Date) => d).center;
     const defineActivePoint = (mx: number): void => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const date = xScale.invert(mx); // date is a Date object
-      // const index = bisect(dataForChart, date, 1);
-      // const leftPointKey = dataForChart[index - 1].key; // "01/01/2020"
-      // const rightPointKey = dataForChart[index] ? dataForChart[index].key : leftPointKey; // for rightmost part of chart
-      // const leftPointX = xScale(new Date(leftPointKey));
-      // const rightPointy = xScale(new Date(rightPointKey));
-      // const closestDate = mx - leftPointX > rightPointy - mx ? rightPointKey : leftPointKey;
-
-      setCurrentActivePoint(dataForChart[0].key);
+      const index = bisect(datesInChart, date, 1);
+      setCurrentActivePoint(index);
     };
 
     d3Select(refBrush.current)
-      .on("touchmove mousemove", function () {
-        const coords: [number, number] = d3Mouse(this as never); // d3 uses context to populate mouse event coordinates
+      .on("touchmove mousemove", (event) => {
+        const coords: [number, number] = d3Pointer(event);
         if (!isBrushed) {
           defineActivePoint(coords[0]);
         }
       })
-      .on("mouseout", function () {
+      .on("mouseout", () => {
         if (!isBrushed) {
           setCurrentActivePoint(undefined);
         }
       });
-  }, [xScale, dataForChart, isBrushed]);
+  }, [xScale, datesInChart, isBrushed]);
 
   useEffect(() => {
     onInteraction(currentActivePoint);
