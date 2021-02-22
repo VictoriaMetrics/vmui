@@ -41,7 +41,7 @@ module.exports = {
     "react/prop-types": 0,
     "max-lines": [
       "error",
-      {"max": 100}
+      {"max": 150}
     ]
   }
 };

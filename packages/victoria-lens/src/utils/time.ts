@@ -1,43 +1,11 @@
-import {TimeParams} from "../types";
+import {TimeParams, TimePeriod} from "../types";
 
-import * as dayjs from "dayjs";
+import dayjs, {UnitTypeShort} from "dayjs";
 import duration from "dayjs/plugin/duration";
-import {UnitTypeShort} from "dayjs";
 
 dayjs.extend(duration);
 
-export enum TimePreset {
-  "lastHour",
-  "last15Min",
-  "last2Min",
-  "last24Hours"
-}
-
-const MAX_ITEMS_PER_CHART = 300; // TODO: make dependent from screen size
-
-export const getTimeperiodForPreset = (p: TimePreset): TimeParams => {
-  const n = (new Date()).valueOf() / 1000;
-  let delta = 0;
-  switch (p) {
-    case TimePreset.last2Min:
-      delta = 60 * 2;
-      break;
-    case TimePreset.last15Min:
-      delta = 60 * 15;
-      break;
-    case TimePreset.lastHour:
-      delta = 60 * 60;
-      break;
-    case TimePreset.last24Hours:
-      delta = 60 * 60 * 24;
-  }
-
-  return {
-    start: n - delta,
-    end: n,
-    step: delta / MAX_ITEMS_PER_CHART
-  };
-};
+const MAX_ITEMS_PER_CHART = 100; // TODO: make dependent from screen size
 
 export const supportedDurations = [
   {long: "days", short: "d", possible: "day"},
@@ -62,8 +30,8 @@ export const isSupportedDuration = (str: string): Partial<Record<UnitTypeShort, 
   }
 };
 
-export const getTimeperiodForDuration = (dur: string): TimeParams => {
-  const n = (new Date()).valueOf() / 1000;
+export const getTimeperiodForDuration = (dur: string, date?: Date): TimeParams => {
+  const n = (date || new Date()).valueOf() / 1000;
 
   const durItems = dur.trim().split(" ");
 
@@ -90,3 +58,21 @@ export const getTimeperiodForDuration = (dur: string): TimeParams => {
     step: delta / MAX_ITEMS_PER_CHART
   };
 };
+
+export const formatDateForNativeInput = (date: Date): string => {
+  const isoString = dayjs(date).format("YYYY-MM-DD[T]HH:mm:ss");
+  return isoString;
+};
+
+export const getDurationFromPeriod = (p: TimePeriod): string => {
+  const dur = dayjs.duration(p.to.valueOf() - p.from.valueOf());
+  const durs: UnitTypeShort[] = ["d", "h", "m", "s"];
+  return durs
+    .map(d => ({val: dur.get(d), str: d}))
+    .filter(obj => obj.val !== 0)
+    .map(obj => `${obj.val}${obj.str}`)
+    .join(" ");
+};
+
+export const dateFromSeconds = (epochTimeInSeconds: number): Date =>
+  new Date(epochTimeInSeconds * 1000);

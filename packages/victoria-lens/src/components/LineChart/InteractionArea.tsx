@@ -1,40 +1,31 @@
-/* eslint max-lines: ["error", {"max": 200}] */ // Complex D3 logic here - file can be larger
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {bisector, brushX, pointer as d3Mouse, ScaleLinear, ScaleTime, select as d3Select, timeDay} from "d3";
-import {AggregatedDataSet} from "./model";
-import {DataValue} from "../../types";
-
-export type InteractionType = number | [number, number]; // timestamp is single date and 2 timestamps for period
+/* eslint max-lines: ["error", {"max": 200}] */                // Complex D3 logic here - file can be larger
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {bisector, brushX, pointer as d3Pointer, ScaleLinear, ScaleTime, select as d3Select} from "d3";
 
 interface LineI {
   yScale: ScaleLinear<number, number>;
   xScale: ScaleTime<number, number>;
-  dataForChart: DataValue[];
-  onInteraction: (key: InteractionType | undefined) => void; // key is "01/01/2020". undefined means no interaction
+  datesInChart: Date[];
+  setSelection: (from: Date, to: Date) => void;
+  onInteraction: (index: number | undefined) => void; // key is index. undefined means no interaction
 }
 
-export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, onInteraction}) => {
+export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, onInteraction, setSelection}) => {
   const refBrush = useRef<SVGGElement>(null);
 
-  const [currentActivePoint, setCurrentActivePoint] = useState<InteractionType>();
+  const [currentActivePoint, setCurrentActivePoint] = useState<number>();
   const [isBrushed, setIsBrushed] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-function-return-type
   function brushEnded(this: any, event: any) {
     const selection = event.selection;
     if (selection) {
-      const interval = timeDay.every(1);
       if (!event.sourceEvent) return; // see comment in brushstarted
-      // eslint-disable-next-line
-      // @ts-ignore
-      const [x0, x1] = selection.map((d) => interval.round(xScale.invert(d)));
-      d3Select(this)
-        .transition()
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        .call(brush.move, x1 > x0 ? [x0, x1].map(xScale) : null);
-
       setIsBrushed(true);
-      setCurrentActivePoint([x0, x1]);
+      const [from, to]: [Date, Date] = selection.map((s: number) => xScale.invert(s));
+      setSelection(from, to);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      d3Select(refBrush.current).call(brush.move as any, null); // clean brush
     } else {
       // end event with empty selection means that we're cancelling brush
       setIsBrushed(false);
@@ -66,60 +57,52 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, dataForChart, 
     [brushEnded, xScale, yScale]
   );
 
-  const resetBrushHandler = useCallback(
-    (e) => {
-      const el = e.target as HTMLElement;
-      if (
-        el &&
-        el.tagName !== "rect" &&
-        e.target.classList.length &&
-        !e.target.classList.contains("selection") &&
-        currentActivePoint
-      ) {
-        setCurrentActivePoint(undefined);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        d3Select(refBrush.current).call(brush.move as any, null);
-      }
-    },
-    [brush.move, currentActivePoint]
-  );
+  // Needed to clean brush if we need to keep it
+
+  // const resetBrushHandler = useCallback(
+  //   (e) => {
+  //     const el = e.target as HTMLElement;
+  //     if (
+  //       el &&
+  //       el.tagName !== "rect" &&
+  //       e.target.classList.length &&
+  //       !e.target.classList.contains("selection")
+  //     ) {
+  //       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //       d3Select(refBrush.current).call(brush.move as any, null);
+  //     }
+  //   },
+  //   [brush.move]
+  // );
+
+  // useEffect(() => {
+  //   window.addEventListener("click", resetBrushHandler);
+  //   return () => {
+  //     window.removeEventListener("click", resetBrushHandler);
+  //   };
+  // }, [resetBrushHandler]);
 
   useEffect(() => {
-    window.addEventListener("click", resetBrushHandler);
-    return () => {
-      window.removeEventListener("click", resetBrushHandler);
-    };
-  }, [resetBrushHandler]);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const bisect = bisector((d: AggregatedDataSet) => new Date(d.key)).left;
+    const bisect = bisector((d: Date) => d).center;
     const defineActivePoint = (mx: number): void => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const date = xScale.invert(mx); // date is a Date object
-      // const index = bisect(dataForChart, date, 1);
-      // const leftPointKey = dataForChart[index - 1].key; // "01/01/2020"
-      // const rightPointKey = dataForChart[index] ? dataForChart[index].key : leftPointKey; // for rightmost part of chart
-      // const leftPointX = xScale(new Date(leftPointKey));
-      // const rightPointy = xScale(new Date(rightPointKey));
-      // const closestDate = mx - leftPointX > rightPointy - mx ? rightPointKey : leftPointKey;
-
-      setCurrentActivePoint(dataForChart[0].key);
+      const index = bisect(datesInChart, date, 1);
+      setCurrentActivePoint(index);
     };
 
     d3Select(refBrush.current)
-      .on("touchmove mousemove", function () {
-        const coords: [number, number] = d3Mouse(this as never); // d3 uses context to populate mouse event coordinates
+      .on("touchmove mousemove", (event) => {
+        const coords: [number, number] = d3Pointer(event);
         if (!isBrushed) {
           defineActivePoint(coords[0]);
         }
       })
-      .on("mouseout", function () {
+      .on("mouseout", () => {
         if (!isBrushed) {
           setCurrentActivePoint(undefined);
         }
       });
-  }, [xScale, dataForChart, isBrushed]);
+  }, [xScale, datesInChart, isBrushed]);
 
   useEffect(() => {
     onInteraction(currentActivePoint);

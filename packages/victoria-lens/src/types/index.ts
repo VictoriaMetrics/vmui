@@ -4,8 +4,13 @@ export interface TimeParams {
   step?: number; // seconds
 }
 
+export interface TimePeriod {
+  from: Date;
+  to: Date;
+}
+
 export interface DataValue {
-  key: number; // timestamp
+  key: number; // timestamp in seconds
   value: number; // y axis value
 }
 

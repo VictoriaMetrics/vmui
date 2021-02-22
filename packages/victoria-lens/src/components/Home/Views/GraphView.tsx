@@ -30,18 +30,30 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
 
   const seriesNames = useMemo(() => series.map(s => s.metadata.name), [series]);
 
+  // should not change as often as array of series names (for instance between executions of same query) to
+  // keep related state (like selection of a labels)
+  const [seriesNamesStable, setSeriesNamesStable] = useState(seriesNames);
+
+  useEffect(() => {
+    // primitive way to check the fact that array contents are identical
+    if (seriesNamesStable.join(",") !== seriesNames.join(",")) {
+      setSeriesNamesStable(seriesNames);
+    }
+  }, [seriesNames, setSeriesNamesStable, seriesNamesStable]);
+
   const color = useMemo(() =>
     scaleOrdinal<string>()
-      .domain(seriesNames) // associate series names with colors
-      .range(schemeCategory10), [seriesNames]);
+      .domain(seriesNamesStable) // associate series names with colors
+      .range(schemeCategory10), [seriesNamesStable]);
 
+  // changes only if names of series are different
   const initLabels = useMemo(() => {
-    return seriesNames.map(name => ({
+    return seriesNamesStable.map(name => ({
       color: color(name),
       label: name,
       checked: true // init with checked always
     } as LegendItem));
-  }, [color, seriesNames]);
+  }, [color, seriesNamesStable]);
 
   const [labels, setLabels] = useState(initLabels);
 
