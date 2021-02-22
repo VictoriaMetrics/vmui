@@ -11,6 +11,7 @@ import {InteractionArea} from "./InteractionArea";
 import {Box, Popover} from "@material-ui/core";
 import {ChartTooltip} from "./ChartTooltip";
 import {useAppDispatch} from "../../state/StateContext";
+import {dateFromSeconds} from "../../utils/time";
 
 interface LineChartProps {
   series: DataSeries[];
@@ -36,7 +37,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const margin = {top: 10, right: 20, bottom: 70, left: 50};
   const svgWidth = useMemo(() => screenWidth - margin.left - margin.right, [screenWidth, margin.left, margin.right]);
   const svgHeight = useMemo(() => height - margin.top - margin.bottom, [margin.top, margin.bottom]);
-  const xScale = useMemo(() => scaleTime().domain([new Date(timePresets.start * 1000), new Date(timePresets.end * 1000)]).range([0, svgWidth]), [
+  const xScale = useMemo(() => scaleTime().domain([timePresets.start,timePresets.end].map(dateFromSeconds)).range([0, svgWidth]), [
     svgWidth,
     timePresets
   ]);
@@ -62,7 +63,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const line = useMemo(
     () =>
       d3Line<DataValue>()
-        .x((d) => xScale(new Date(d.key * 1000)))
+        .x((d) => xScale(dateFromSeconds(d.key)))
         .y((d) => yScale(d.value || 0)),
     [xScale, yScale]
   );
@@ -71,7 +72,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const handleChartInteraction = useCallback(
     async (key: number | undefined) => {
       if (typeof key === "number") {
-        const date = new Date(series[0].values[key].key * 1000);
+        const date = dateFromSeconds(series[0].values[key].key);
         // popover orientation should be defined based on the scale domain middle, not data, since
         // data may not be present for the whole range
         const leftPart = date.valueOf() < (xScale.domain()[1].valueOf() + xScale.domain()[0].valueOf()) / 2;
@@ -101,7 +102,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const tooltipAnchor = useRef<SVGGElement>(null);
 
   const seriesDates = useMemo(() => {
-    return series[0].values.map(v => new Date(v.key * 1000));
+    return series[0].values.map(v => v.key).map(dateFromSeconds);
   }, [series]);
 
   const setSelection = (from: Date, to: Date) => {

@@ -1,6 +1,6 @@
 import {DisplayType} from "../components/Home/Configurator/DisplayTypeSwitch";
 import {TimeParams, TimePeriod} from "../types";
-import {getDurationFromPeriod, getTimeperiodForDuration} from "../utils/time";
+import {dateFromSeconds, getDurationFromPeriod, getTimeperiodForDuration} from "../utils/time";
 
 export interface TimeState {
   duration: string;
@@ -63,7 +63,7 @@ export function reducer(state: AppState, action: Action): AppState {
         time: {
           ...state.time,
           duration: action.payload,
-          period: getTimeperiodForDuration(action.payload, new Date(state.time.period.end * 1000))
+          period: getTimeperiodForDuration(action.payload,dateFromSeconds(state.time.period.end))
         }
       };
     case "SET_PERIOD":
@@ -94,7 +94,7 @@ export function reducer(state: AppState, action: Action): AppState {
         ...state,
         time: {
           ...state.time,
-          period: getTimeperiodForDuration(state.time.duration, new Date(state.time.period.end * 1000))
+          period: getTimeperiodForDuration(state.time.duration, dateFromSeconds(state.time.period.end))
         }
       };
     case "RUN_QUERY_TO_NOW":

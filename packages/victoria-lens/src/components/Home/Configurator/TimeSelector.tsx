@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from "react";
 import {Box, Link, Popover, TextField, Typography} from "@material-ui/core";
 import {TimeDurationPopover} from "./TimeDurationPopover";
 import {useAppDispatch, useAppState} from "../../../state/StateContext";
-import {formatDateForNativeInput} from "../../../utils/time";
+import {dateFromSeconds, formatDateForNativeInput} from "../../../utils/time";
 
 interface TimeSelectorProps {
   setDuration: (str: string) => void;
@@ -26,7 +26,7 @@ export const TimeSelector: FC<TimeSelectorProps> = ({setDuration}) => {
   }, [duration]);
 
   useEffect(() => {
-    setUntil(formatDateForNativeInput(new Date(end * 1000)));
+    setUntil(formatDateForNativeInput(dateFromSeconds(end)));
   }, [end]);
 
   useEffect(() => {

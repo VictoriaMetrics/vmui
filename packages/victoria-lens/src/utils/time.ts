@@ -73,3 +73,6 @@ export const getDurationFromPeriod = (p: TimePeriod): string => {
     .map(obj => `${obj.val}${obj.str}`)
     .join(" ");
 };
+
+export const dateFromSeconds = (epochTimeInSeconds: number): Date =>
+  new Date(epochTimeInSeconds * 1000);
