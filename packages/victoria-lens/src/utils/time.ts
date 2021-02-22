@@ -59,7 +59,7 @@ export const getTimeperiodForDuration = (dur: string, date?: Date): TimeParams =
   };
 };
 
-export const formatDateForNativeInput = (date: Date) => {
+export const formatDateForNativeInput = (date: Date): string => {
   const isoString = dayjs(date).format("YYYY-MM-DD[T]HH:mm:ss");
   return isoString;
 };

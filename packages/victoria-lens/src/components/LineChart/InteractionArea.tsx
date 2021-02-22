@@ -1,5 +1,5 @@
-/* eslint max-lines: ["error", {"max": 200}] */        // Complex D3 logic here - file can be larger
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+/* eslint max-lines: ["error", {"max": 200}] */                // Complex D3 logic here - file can be larger
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {bisector, brushX, pointer as d3Pointer, ScaleLinear, ScaleTime, select as d3Select} from "d3";
 
 interface LineI {
@@ -24,8 +24,8 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, 
       setIsBrushed(true);
       const [from, to]: [Date, Date] = selection.map((s: number) => xScale.invert(s));
       setSelection(from, to);
-      // clean brush
-      d3Select(refBrush.current).call(brush.move as any, null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      d3Select(refBrush.current).call(brush.move as any, null); // clean brush
     } else {
       // end event with empty selection means that we're cancelling brush
       setIsBrushed(false);

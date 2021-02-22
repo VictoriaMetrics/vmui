@@ -1,5 +1,5 @@
 /* eslint max-lines: ["error", {"max": 200}] */
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useMemo, useRef, useState} from "react";
 import {line as d3Line, max as d3Max, min as d3Min, scaleLinear, ScaleOrdinal, scaleTime} from "d3";
 import "./line-chart.css";
 import Measure from "react-measure";
