@@ -1,38 +1,31 @@
-/* eslint max-lines: ["error", {"max": 200}] */    // Complex D3 logic here - file can be larger
+/* eslint max-lines: ["error", {"max": 200}] */        // Complex D3 logic here - file can be larger
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {bisector, brushX, pointer as d3Pointer, ScaleLinear, ScaleTime, select as d3Select, timeDay} from "d3";
-
-export type InteractionType = number | [number, number]; // timestamp is single date and 2 timestamps for period
+import {bisector, brushX, pointer as d3Pointer, ScaleLinear, ScaleTime, select as d3Select} from "d3";
 
 interface LineI {
   yScale: ScaleLinear<number, number>;
   xScale: ScaleTime<number, number>;
   datesInChart: Date[];
-  onInteraction: (key: InteractionType | undefined) => void; // key is index. undefined means no interaction
+  setSelection: (from: Date, to: Date) => void;
+  onInteraction: (index: number | undefined) => void; // key is index. undefined means no interaction
 }
 
-export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, onInteraction}) => {
+export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, onInteraction, setSelection}) => {
   const refBrush = useRef<SVGGElement>(null);
 
-  const [currentActivePoint, setCurrentActivePoint] = useState<InteractionType>();
+  const [currentActivePoint, setCurrentActivePoint] = useState<number>();
   const [isBrushed, setIsBrushed] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-function-return-type
   function brushEnded(this: any, event: any) {
     const selection = event.selection;
     if (selection) {
-      const interval = timeDay.every(1);
       if (!event.sourceEvent) return; // see comment in brushstarted
-      // eslint-disable-next-line
-      // @ts-ignore
-      const [x0, x1] = selection.map((d) => interval.round(xScale.invert(d)));
-      d3Select(this)
-        .transition()
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        .call(brush.move, x1 > x0 ? [x0, x1].map(xScale) : null);
-
       setIsBrushed(true);
-      setCurrentActivePoint([x0, x1]);
+      const [from, to]: [Date, Date] = selection.map((s: number) => xScale.invert(s));
+      setSelection(from, to);
+      // clean brush
+      d3Select(refBrush.current).call(brush.move as any, null);
     } else {
       // end event with empty selection means that we're cancelling brush
       setIsBrushed(false);
@@ -64,30 +57,30 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, 
     [brushEnded, xScale, yScale]
   );
 
-  const resetBrushHandler = useCallback(
-    (e) => {
-      const el = e.target as HTMLElement;
-      if (
-        el &&
-        el.tagName !== "rect" &&
-        e.target.classList.length &&
-        !e.target.classList.contains("selection") &&
-        currentActivePoint
-      ) {
-        setCurrentActivePoint(undefined);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        d3Select(refBrush.current).call(brush.move as any, null);
-      }
-    },
-    [brush.move, currentActivePoint]
-  );
+  // Needed to clean brush if we need to keep it
 
-  useEffect(() => {
-    window.addEventListener("click", resetBrushHandler);
-    return () => {
-      window.removeEventListener("click", resetBrushHandler);
-    };
-  }, [resetBrushHandler]);
+  // const resetBrushHandler = useCallback(
+  //   (e) => {
+  //     const el = e.target as HTMLElement;
+  //     if (
+  //       el &&
+  //       el.tagName !== "rect" &&
+  //       e.target.classList.length &&
+  //       !e.target.classList.contains("selection")
+  //     ) {
+  //       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //       d3Select(refBrush.current).call(brush.move as any, null);
+  //     }
+  //   },
+  //   [brush.move]
+  // );
+
+  // useEffect(() => {
+  //   window.addEventListener("click", resetBrushHandler);
+  //   return () => {
+  //     window.removeEventListener("click", resetBrushHandler);
+  //   };
+  // }, [resetBrushHandler]);
 
   useEffect(() => {
     const bisect = bisector((d: Date) => d).center;

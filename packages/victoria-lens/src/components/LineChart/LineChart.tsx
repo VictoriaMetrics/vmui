@@ -7,9 +7,10 @@ import {AxisBottom} from "./AxisBottom";
 import {AxisLeft} from "./AxisLeft";
 import {DataSeries, DataValue, TimeParams} from "../../types";
 import {InteractionLine} from "./InteractionLine";
-import {InteractionArea, InteractionType} from "./InteractionArea";
+import {InteractionArea} from "./InteractionArea";
 import {Box, Popover} from "@material-ui/core";
 import {ChartTooltip} from "./ChartTooltip";
+import {useAppDispatch} from "../../state/StateContext";
 
 interface LineChartProps {
   series: DataSeries[];
@@ -29,6 +30,8 @@ const TOOLTIP_MARGIN = 20;
 
 export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height, color}) => {
   const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+  const dispatch = useAppDispatch();
 
   const margin = {top: 10, right: 20, bottom: 70, left: 50};
   const svgWidth = useMemo(() => screenWidth - margin.left - margin.right, [screenWidth, margin.left, margin.right]);
@@ -66,14 +69,17 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const getDataLine = (series: DataSeries) => line(series.values);
 
   const handleChartInteraction = useCallback(
-    async (key: InteractionType | undefined) => {
-      if (typeof key === "number") { // || typeof key === "object"
+    async (key: number | undefined) => {
+      if (typeof key === "number") {
         const date = new Date(series[0].values[key].key * 1000);
+        // popover orientation should be defined based on the scale domain middle, not data, since
+        // data may not be present for the whole range
+        const leftPart = date.valueOf() < (xScale.domain()[1].valueOf() + xScale.domain()[0].valueOf()) / 2;
         setTooltipState({
           date,
           xCoord: xScale(date),
           index: key,
-          leftPart: key < series[0].values.length / 2
+          leftPart
         });
         setShowTooltip(true);
       } else {
@@ -81,7 +87,6 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
         setTooltipState(undefined);
       }
     },
-    // [getTooltipData, xScale]
     [xScale, series]
   );
 
@@ -99,9 +104,9 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
     return series[0].values.map(v => new Date(v.key * 1000));
   }, [series]);
 
-
-  useEffect(() => console.log(timePresets), [timePresets]);
-  useEffect(() => console.log(seriesDates[0]), [seriesDates]);
+  const setSelection = (from: Date, to: Date) => {
+    dispatch({type: "SET_PERIOD", payload: {from, to}});
+  };
 
   return (
     <Measure bounds onResize={({bounds}) => bounds && setScreenWidth(bounds?.width)}>
@@ -153,6 +158,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
                 yScale={yScale}
                 datesInChart={seriesDates}
                 onInteraction={handleChartInteraction}
+                setSelection={setSelection}
               />
             </g>
           </svg>

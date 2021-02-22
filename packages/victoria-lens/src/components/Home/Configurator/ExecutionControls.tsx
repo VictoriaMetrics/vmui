@@ -3,39 +3,39 @@ import {Box, FormControlLabel, IconButton, Switch} from "@material-ui/core";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 
 import EqualizerIcon from "@material-ui/icons/Equalizer";
-import {useAppDispatch} from "../../../state/StateContext";
+import {useAppDispatch, useAppState} from "../../../state/StateContext";
 import CircularProgressWithLabel from "../../common/CircularProgressWithLabel";
 
 export const ExecutionControls: FC = () => {
 
   const dispatch = useAppDispatch();
+  const {queryControls: {autoRefresh}} = useAppState();
 
   const [delay, setDelay] = useState<(1|2|5)>(5);
   const [lastUpdate, setLastUpdate] = useState<number|undefined>();
   const [progress, setProgress] = React.useState(100);
-  const [checked, setChecked] = React.useState(false);
 
   const handleChange = () => {
-    setChecked((prev) => !prev);
+    dispatch({type: "TOGGLE_AUTOREFRESH"});
   };
 
   useEffect(() => {
     let timer: number;
-    if (checked) {
+    if (autoRefresh) {
       setLastUpdate(new Date().valueOf());
       timer = setInterval(() => {
         setLastUpdate(new Date().valueOf());
-        dispatch({type: "RUN_QUERY"});
+        dispatch({type: "RUN_QUERY_TO_NOW"});
       }, delay * 1000) as unknown as number;
     }
     return () => {
       timer && clearInterval(timer);
     };
-  }, [delay, checked]);
+  }, [delay, autoRefresh]);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (checked && lastUpdate) {
+      if (autoRefresh && lastUpdate) {
         const delta = (new Date().valueOf() - lastUpdate) / 1000; //s
         const nextValue = Math.floor(delta / delay * 100);
         setProgress(nextValue);
@@ -44,7 +44,7 @@ export const ExecutionControls: FC = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [checked, lastUpdate, delay]);
+  }, [autoRefresh, lastUpdate, delay]);
 
   const iterateDelays = () => {
     setDelay(prev => {
@@ -67,12 +67,12 @@ export const ExecutionControls: FC = () => {
         <PlayCircleOutlineIcon fontSize="large"/>
       </IconButton>
     </Box>
-    <FormControlLabel
-      control={<Switch checked={checked} onChange={handleChange} />}
+    {<FormControlLabel
+      control={<Switch checked={autoRefresh} onChange={handleChange} />}
       label="Auto-refresh"
-    />
+    />}
 
-    {checked && <>
+    {autoRefresh && <>
       <CircularProgressWithLabel label={delay} value={progress} onClick={() => {iterateDelays();}} />
       <Box ml={1}>
         <IconButton onClick={() => {iterateDelays();}}><EqualizerIcon/></IconButton>
