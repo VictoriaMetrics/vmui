@@ -92,7 +92,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
 
   const tooltipData = useMemo(() => {
     if (tooltipState) {
-      return series.map(s => ({value: s.values[tooltipState.index].value, name: s.metadata.name}));
+      return series.map(s => ({value: s.values[tooltipState.index].value, name: s.metadata.name, color: color(s.metadata.name)}));
     } else {
       return undefined;
     }
