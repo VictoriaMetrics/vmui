@@ -72,17 +72,20 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const handleChartInteraction = useCallback(
     async (key: number | undefined) => {
       if (typeof key === "number") {
-        const date = dateFromSeconds(series[0].values[key].key);
-        // popover orientation should be defined based on the scale domain middle, not data, since
-        // data may not be present for the whole range
-        const leftPart = date.valueOf() < (xScale.domain()[1].valueOf() + xScale.domain()[0].valueOf()) / 2;
-        setTooltipState({
-          date,
-          xCoord: xScale(date),
-          index: key,
-          leftPart
-        });
-        setShowTooltip(true);
+        if (series && series[0]) {
+          const date = dateFromSeconds(series[0].values[key].key);
+          // popover orientation should be defined based on the scale domain middle, not data, since
+          // data may not be present for the whole range
+          const leftPart = date.valueOf() < (xScale.domain()[1].valueOf() + xScale.domain()[0].valueOf()) / 2;
+          setTooltipState({
+            date,
+            xCoord: xScale(date),
+            index: key,
+            leftPart
+          });
+          setShowTooltip(true);
+        }
+
       } else {
         setShowTooltip(false);
         setTooltipState(undefined);
@@ -102,7 +105,11 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const tooltipAnchor = useRef<SVGGElement>(null);
 
   const seriesDates = useMemo(() => {
-    return series[0].values.map(v => v.key).map(dateFromSeconds);
+    if (series && series[0]) {
+      return series[0].values.map(v => v.key).map(dateFromSeconds);
+    } else {
+      return [];
+    }
   }, [series]);
 
   const setSelection = (from: Date, to: Date) => {
