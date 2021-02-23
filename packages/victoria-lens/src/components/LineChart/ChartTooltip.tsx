@@ -27,11 +27,13 @@ export const ChartTooltip: React.FC<ChartTooltipProps> = ({data, time}) => {
         <Typography variant="subtitle1">{`${time?.toLocaleDateString()} ${time?.toLocaleTimeString()}`}</Typography>
       </Box>
       <Box>
-        {data.map(({name, color,value}) =>
-          <Box mb={.25} key={name} display="flex" flexDirection="row" alignItems="center">
-            <div style={{backgroundColor: color, width: "10px", height: "10px", marginRight: "4px"}}></div>
-            <Typography variant="body2">{value}</Typography>
-          </Box>)}
+        <Typography variant="body2">
+          {data.map(({name, color,value}) =>
+            <Box mb={.25} key={name} display="flex" flexDirection="row" alignItems="center">
+              <div style={{backgroundColor: color, width: "10px", height: "10px", marginRight: "4px"}}></div>
+              {value}
+            </Box>)}
+        </Typography>
       </Box>
     </Box>
   );
