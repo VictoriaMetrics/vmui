@@ -28,9 +28,9 @@ export type Action =
     | { type: "TOGGLE_AUTOREFRESH"}
 
 export const initialState: AppState = {
-  serverUrl: "http://127.0.0.1:8428",
+  serverUrl: "https://demo.promlabs.com",
   displayType: "chart",
-  query: "rate(\n\t\tvm_cache_size_bytes[5m]\n)",
+  query: "prometheus_http_request_duration_seconds_bucket",
   time: {
     duration: "1h",
     period: getTimeperiodForDuration("1h")

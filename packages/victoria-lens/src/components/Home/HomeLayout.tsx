@@ -32,7 +32,8 @@ const HomeLayout: FC = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h5">
-              Victoria Lens
+            <span style={{fontWeight: "bolder"}}>VM</span>
+            <span style={{fontWeight: "lighter"}}>UI</span>
           </Typography>
         </Toolbar>
       </AppBar>
