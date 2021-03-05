@@ -9,9 +9,10 @@ export interface QueryEditorProps {
   setQuery: (query: string) => void;
   query: string;
   server: string;
+  oneLiner?: boolean;
 }
 
-const QueryEditor: FC<QueryEditorProps> = ({query, setQuery, server}) => {
+const QueryEditor: FC<QueryEditorProps> = ({query, setQuery, server, oneLiner = false}) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -52,7 +53,8 @@ const QueryEditor: FC<QueryEditorProps> = ({query, setQuery, server}) => {
 
   return (
     <>
-      <div ref={ref}></div>
+      {/*Class one-line-scroll and other codemirror stylings are declared in index.css*/}
+      <div ref={ref} className={oneLiner ? "one-line-scroll" : undefined}></div>
     </>
   );
 };

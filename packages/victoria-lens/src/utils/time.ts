@@ -5,7 +5,7 @@ import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
-const MAX_ITEMS_PER_CHART = 100; // TODO: make dependent from screen size
+const MAX_ITEMS_PER_CHART = 30; // TODO: make dependent from screen size
 
 export const supportedDurations = [
   {long: "days", short: "d", possible: "day"},

@@ -1,25 +1,14 @@
 import React, {FC} from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  AppBar,
-  Box,
-  CircularProgress,
-  Fade,
-  Toolbar,
-  Typography
-} from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import {AppBar, Box, CircularProgress, Fade, Toolbar, Typography} from "@material-ui/core";
 import {ExecutionControls} from "./Configurator/ExecutionControls";
 import {DisplayTypeSwitch} from "./Configurator/DisplayTypeSwitch";
-import {UrlLine} from "./UrlLine";
 import GraphView from "./Views/GraphView";
 import TableView from "./Views/TableView";
 import {useAppState} from "../../state/StateContext";
 import QueryConfigurator from "./Configurator/QueryConfigurator";
 import {useFetchQuery} from "./Configurator/useFetchQuery";
 import JsonView from "./Views/JsonView";
+import {UrlCopy} from "./UrlCopy";
 
 const HomeLayout: FC = () => {
 
@@ -31,33 +20,23 @@ const HomeLayout: FC = () => {
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h5">
-            <span style={{fontWeight: "bolder"}}>VM</span>
-            <span style={{fontWeight: "lighter"}}>UI</span>
-          </Typography>
+          <Box mr={2}>
+            <Typography variant="h5">
+              <span style={{fontWeight: "bolder"}}>VM</span>
+              <span style={{fontWeight: "lighter"}}>UI</span>
+            </Typography>
+          </Box>
+          <Box flexGrow={1}>
+            <ExecutionControls/>
+          </Box>
+          <DisplayTypeSwitch/>
+          <UrlCopy url={fetchUrl}/>
         </Toolbar>
       </AppBar>
       <Box display="flex" flexDirection="column" style={{height: "calc(100vh - 64px)"}}>
         <Box m={2}>
-          <Accordion defaultExpanded={true}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon/>}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography variant="h6" component="h2">Query Configuration</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <QueryConfigurator/>
-            </AccordionDetails>
-          </Accordion>
-
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <ExecutionControls/>
-            <DisplayTypeSwitch/>
-          </Box>
+          <QueryConfigurator/>
         </Box>
-        <UrlLine url={fetchUrl}/>
         <Box flexShrink={1} style={{overflowY: "scroll"}}>
           {isLoading && <Fade in={isLoading} style={{
             transitionDelay: isLoading ? "300ms" : "0ms",

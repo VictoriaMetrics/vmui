@@ -35,9 +35,11 @@ export const SnackbarProvider: FC = ({children}) => {
     }
   }, [infoMessage]);
 
-  const handleClose = (): void => {
-    setInfoMessage(undefined);
-    setOpen(false);
+  const handleClose = (e: unknown, reason: string): void => {
+    if (reason !== "clickaway") {
+      setInfoMessage(undefined);
+      setOpen(false);
+    }
   };
 
   return <SnackbarContext.Provider value={{showInfoMessage: setInfoMessage}}>

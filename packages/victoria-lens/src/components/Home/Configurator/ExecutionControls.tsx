@@ -5,8 +5,16 @@ import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import {useAppDispatch, useAppState} from "../../../state/StateContext";
 import CircularProgressWithLabel from "../../common/CircularProgressWithLabel";
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  colorizing: {
+    color: "white"
+  }
+});
 
 export const ExecutionControls: FC = () => {
+  const classes = useStyles();
 
   const dispatch = useAppDispatch();
   const {queryControls: {autoRefresh}} = useAppState();
@@ -64,18 +72,18 @@ export const ExecutionControls: FC = () => {
   return <Box display="flex" alignItems="center">
     <Box mr={2}>
       <IconButton onClick={()=>dispatch({type: "RUN_QUERY"})}>
-        <PlayCircleOutlineIcon fontSize="large"/>
+        <PlayCircleOutlineIcon className={classes.colorizing} fontSize="large"/>
       </IconButton>
     </Box>
     {<FormControlLabel
-      control={<Switch checked={autoRefresh} onChange={handleChange} />}
+      control={<Switch size="small" className={classes.colorizing} checked={autoRefresh} onChange={handleChange} />}
       label="Auto-refresh"
     />}
 
     {autoRefresh && <>
-      <CircularProgressWithLabel label={delay} value={progress} onClick={() => {iterateDelays();}} />
+      <CircularProgressWithLabel className={classes.colorizing} label={delay} value={progress} onClick={() => {iterateDelays();}} />
       <Box ml={1}>
-        <IconButton onClick={() => {iterateDelays();}}><EqualizerIcon/></IconButton>
+        <IconButton onClick={() => {iterateDelays();}}><EqualizerIcon style={{color: "white"}} /></IconButton>
       </Box>
     </>}
   </Box>;

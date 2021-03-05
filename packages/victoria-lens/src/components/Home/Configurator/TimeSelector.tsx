@@ -3,11 +3,28 @@ import {Box, Link, Popover, TextField, Typography} from "@material-ui/core";
 import {TimeDurationPopover} from "./TimeDurationPopover";
 import {useAppDispatch, useAppState} from "../../../state/StateContext";
 import {dateFromSeconds, formatDateForNativeInput} from "../../../utils/time";
+import {makeStyles} from "@material-ui/core/styles";
 
 interface TimeSelectorProps {
   setDuration: (str: string) => void;
   duration: string;
 }
+
+const useStyles = makeStyles({
+  inlineBtn: {
+    "&:hover": {
+      cursor: "pointer"
+    },
+  }
+});
+
+const InlineBtn: React.FC<{handler: () => void; text: string}> = ({handler, text}) => {
+  const classes = useStyles();
+  return <Link component="span" className={classes.inlineBtn}
+    onClick={handler}>
+    {text}
+  </Link>;
+};
 
 export const TimeSelector: FC<TimeSelectorProps> = ({setDuration}) => {
 
@@ -87,30 +104,9 @@ export const TimeSelector: FC<TimeSelectorProps> = ({setDuration}) => {
           >
             <TimeDurationPopover/>
           </Popover>
-          <Link component="button"
-            onClick={() => {
-              setDurationString("2m");
-            }}>
-            2m
-          </Link>,&nbsp;
-          <Link component="button"
-            onClick={() => {
-              setDurationString("15m");
-            }}>
-            15m
-          </Link>,&nbsp;
-          <Link component="button"
-            onClick={() => {
-              setDurationString("1h");
-            }}>
-            1h
-          </Link>,&nbsp;
-          <Link component="button"
-            onClick={() => {
-              setDurationString("1h 30m");
-            }}>
-            1h 30m
-          </Link>
+          <InlineBtn handler={() => setDurationString("5m")} text="5m"/>,&nbsp;
+          <InlineBtn handler={() => setDurationString("1h")} text="1h"/>,&nbsp;
+          <InlineBtn handler={() => setDurationString("1h 30m")} text="1h 30m"/>
         </Typography>
       </Box>
     </Box>
@@ -130,12 +126,7 @@ export const TimeSelector: FC<TimeSelectorProps> = ({setDuration}) => {
       <Box my={2}>
         <Typography variant="body2">
           Will be changed to current time for auto-refresh mode.&nbsp;
-          <Link component="button"
-            onClick={() => {
-              dispatch({type: "RUN_QUERY_TO_NOW"});
-            }}>
-          Switch to now
-          </Link>
+          <InlineBtn handler={() => dispatch({type: "RUN_QUERY_TO_NOW"})} text="Switch to now"/>
         </Typography>
       </Box>
     </Box>

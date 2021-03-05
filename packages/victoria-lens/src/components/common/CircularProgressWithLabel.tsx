@@ -17,7 +17,7 @@ const CircularProgressWithLabel: FC<CircularProgressProps & { label: number }> =
         alignItems="center"
         justifyContent="center"
       >
-        <Typography variant="caption" component="div" color="textSecondary">{`${props.label}s`}</Typography>
+        <Typography variant="caption" component="div">{`${props.label}s`}</Typography>
       </Box>
     </Box>
   );
