@@ -1,6 +1,6 @@
 import React, {FC, useMemo} from "react";
 import {Checkbox, FormControlLabel, Typography} from "@material-ui/core";
-import {MetricCategory} from "../../hooks/getSortedCategories";
+import {MetricCategory} from "../../hooks/useSortedCategories";
 import {makeStyles} from "@material-ui/core/styles";
 
 export interface LegendItem {

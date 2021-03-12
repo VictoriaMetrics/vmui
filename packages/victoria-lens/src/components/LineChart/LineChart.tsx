@@ -12,7 +12,7 @@ import {Box, Popover} from "@material-ui/core";
 import {ChartTooltip, ChartTooltipData} from "./ChartTooltip";
 import {useAppDispatch} from "../../state/StateContext";
 import {dateFromSeconds} from "../../utils/time";
-import {MetricCategory} from "../../hooks/getSortedCategories";
+import {MetricCategory} from "../../hooks/useSortedCategories";
 
 interface LineChartProps {
   series: DataSeries[];

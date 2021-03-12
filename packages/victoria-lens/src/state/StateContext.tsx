@@ -1,5 +1,6 @@
-import React, {createContext, Dispatch, FC, useContext, useMemo, useReducer} from "react";
+import React, {createContext, Dispatch, FC, useContext, useEffect, useMemo, useReducer} from "react";
 import {Action, AppState, initialState, reducer} from "./reducer";
+import {getQueryStringValue, setQueryStringValue} from "../utils/query-string";
 
 type StateContextType = { state: AppState, dispatch: Dispatch<Action> };
 
@@ -8,9 +9,19 @@ export const StateContext = createContext<StateContextType>({} as StateContextTy
 export const useAppState = (): AppState => useContext(StateContext).state;
 export const useAppDispatch = (): Dispatch<Action> => useContext(StateContext).dispatch;
 
+export const initialPrepopulatedState = Object.entries(initialState)
+  .reduce((acc, [key, value]) => ({
+    ...acc,
+    [key]: getQueryStringValue(key) || value
+  }), {}) as AppState;
+
 export const StateProvider: FC = ({children}) => {
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialPrepopulatedState);
+
+  useEffect(() => {
+    setQueryStringValue(state as unknown as Record<string, unknown>);
+  }, [state]);
 
   const contextValue = useMemo(() => {
     return { state, dispatch };

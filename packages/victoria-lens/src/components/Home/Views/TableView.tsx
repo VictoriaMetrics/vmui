@@ -3,7 +3,7 @@ import {InstantMetricResult} from "../../../api/types";
 import {InstantDataSeries} from "../../../types";
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {getSortedCategories} from "../../../hooks/getSortedCategories";
+import {useSortedCategories} from "../../../hooks/useSortedCategories";
 
 export interface GraphViewProps {
   data: InstantMetricResult[];
@@ -19,7 +19,7 @@ const TableView: FC<GraphViewProps> = ({data}) => {
 
   const classes = useStyles();
 
-  const sortedColumns = getSortedCategories(data);
+  const sortedColumns = useSortedCategories(data);
 
   const rows: InstantDataSeries[] = useMemo(() => {
     return data?.map(d => ({

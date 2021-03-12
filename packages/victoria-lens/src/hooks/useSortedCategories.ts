@@ -6,11 +6,7 @@ export type MetricCategory = {
   variations: number;
 }
 
-/**
- * Hook that returns
- * @param data
- */
-export const getSortedCategories = (data: MetricBase[]): MetricCategory[]  => useMemo(() => {
+export const useSortedCategories = (data: MetricBase[]): MetricCategory[]  => useMemo(() => {
   const columns: { [key: string]: { options: Set<string> } } = {};
   data.forEach(d =>
     Object.entries(d.metric).forEach(e =>

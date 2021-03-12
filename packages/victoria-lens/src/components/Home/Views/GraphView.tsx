@@ -7,7 +7,7 @@ import {LineChart} from "../../LineChart/LineChart";
 import {DataSeries, TimeParams} from "../../../types";
 import {getNameForMetric} from "../../../utils/metric";
 import {Legend, LegendItem} from "../../Legend/Legend";
-import {getSortedCategories} from "../../../hooks/getSortedCategories";
+import {useSortedCategories} from "../../../hooks/useSortedCategories";
 import {InlineBtn} from "../../common/InlineBtn";
 
 export interface GraphViewProps {
@@ -40,7 +40,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
 
   const showingSeries = useMemo(() => series.slice(0 ,showN), [series, showN]);
 
-  const sortedCategories = getSortedCategories(data);
+  const sortedCategories = useSortedCategories(data);
 
   const seriesNames = useMemo(() => showingSeries.map(s => s.metadata.name), [showingSeries]);
 
