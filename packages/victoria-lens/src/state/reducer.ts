@@ -30,7 +30,7 @@ export type Action =
 export const initialState: AppState = {
   serverUrl: "https://demo.promlabs.com",
   displayType: "chart",
-  query: "prometheus_http_request_duration_seconds_bucket",
+  query: "demo_memory_usage_bytes",
   time: {
     duration: "1h",
     period: getTimeperiodForDuration("1h")

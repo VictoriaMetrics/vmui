@@ -1,3 +1,5 @@
+import {MetricBase} from "../api/types";
+
 export interface TimeParams {
   start: number; // timestamp in seconds
   end: number; // timestamp in seconds
@@ -14,10 +16,10 @@ export interface DataValue {
   value: number; // y axis value
 }
 
-export interface DataSeries {
+export interface DataSeries extends MetricBase{
   metadata: {
     name: string;
-  }
+  },
   values: DataValue[]; // sorted by key which is timestamp
 }
 

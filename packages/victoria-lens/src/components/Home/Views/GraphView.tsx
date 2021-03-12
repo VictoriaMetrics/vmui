@@ -7,6 +7,7 @@ import {LineChart} from "../../LineChart/LineChart";
 import {DataSeries, TimeParams} from "../../../types";
 import {getNameForMetric} from "../../../utils/metric";
 import {Legend, LegendItem} from "../../Legend/Legend";
+import {getSortedCategories} from "../../../hooks/getSortedCategories";
 
 export interface GraphViewProps {
   data: MetricResult[];
@@ -20,6 +21,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
       metadata: {
         name: getNameForMetric(d)
       },
+      metric: d.metric,
       // VM metrics are tuples - much simpler to work with objects in chart
       values: d.values.map(v => ({
         key: v[0],
@@ -27,6 +29,8 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
       }))
     }));
   }, [data]);
+
+  const sortedCategories = getSortedCategories(data);
 
   const seriesNames = useMemo(() => series.map(s => s.metadata.name), [series]);
 
@@ -78,7 +82,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
 
   return (
     <>
-      <LineChart height={400} series={visibleSeries} color={color} timePresets={timePresets}></LineChart>
+      <LineChart height={400} series={visibleSeries} color={color} timePresets={timePresets} categories={sortedCategories}></LineChart>
       <Legend labels={labels} onChange={onLegendChange}></Legend>
     </>
   );

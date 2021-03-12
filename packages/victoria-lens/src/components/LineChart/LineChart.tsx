@@ -1,4 +1,4 @@
-/* eslint max-lines: ["error", {"max": 200}] */
+/* eslint max-lines: ["error", {"max": 300}] */
 import React, {useCallback, useMemo, useRef, useState} from "react";
 import {line as d3Line, max as d3Max, min as d3Min, scaleLinear, ScaleOrdinal, scaleTime} from "d3";
 import "./line-chart.css";
@@ -9,15 +9,17 @@ import {DataSeries, DataValue, TimeParams} from "../../types";
 import {InteractionLine} from "./InteractionLine";
 import {InteractionArea} from "./InteractionArea";
 import {Box, Popover} from "@material-ui/core";
-import {ChartTooltip} from "./ChartTooltip";
+import {ChartTooltip, ChartTooltipData} from "./ChartTooltip";
 import {useAppDispatch} from "../../state/StateContext";
 import {dateFromSeconds} from "../../utils/time";
+import {MetricCategory} from "../../hooks/getSortedCategories";
 
 interface LineChartProps {
   series: DataSeries[];
   timePresets: TimeParams;
   height: number;
   color: ScaleOrdinal<string, string>; // maps name to color hex code
+  categories: MetricCategory[];
 }
 
 interface TooltipState {
@@ -25,11 +27,12 @@ interface TooltipState {
   date: Date;
   index: number;
   leftPart: boolean;
+  activeSeries: number;
 }
 
 const TOOLTIP_MARGIN = 20;
 
-export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height, color}) => {
+export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height, color, categories}) => {
   const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
 
   const dispatch = useAppDispatch();
@@ -43,6 +46,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   ]);
 
   const [showTooltip, setShowTooltip] = useState(false);
+
   const [tooltipState, setTooltipState] = useState<TooltipState>();
 
   const yAxisLabel = ""; // TODO: label
@@ -70,9 +74,20 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
   const getDataLine = (series: DataSeries) => line(series.values);
 
   const handleChartInteraction = useCallback(
-    async (key: number | undefined) => {
+    async (key: number | undefined, y: number | undefined) => {
       if (typeof key === "number") {
-        if (series && series[0]) {
+        if (y && series && series[0]) {
+
+          // define closest series in chart
+          const hoveringOverValue = yScale.invert(y);
+          const closestPoint = series.map(s => s.values[key].value).reduce((acc, nextValue, index) => {
+            const delta = Math.abs(hoveringOverValue - nextValue);
+            if (delta < acc.delta) {
+              acc = {delta, index};
+            }
+            return acc;
+          }, {delta: Infinity, index: 0});
+
           const date = dateFromSeconds(series[0].values[key].key);
           // popover orientation should be defined based on the scale domain middle, not data, since
           // data may not be present for the whole range
@@ -81,22 +96,25 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
             date,
             xCoord: xScale(date),
             index: key,
+            activeSeries: closestPoint.index,
             leftPart
           });
           setShowTooltip(true);
         }
-
       } else {
         setShowTooltip(false);
         setTooltipState(undefined);
       }
     },
-    [xScale, series]
+    [xScale, yScale, series]
   );
 
-  const tooltipData = useMemo(() => {
-    if (tooltipState) {
-      return series.map(s => ({value: s.values[tooltipState.index].value, name: s.metadata.name, color: color(s.metadata.name)}));
+  const tooltipData: ChartTooltipData | undefined = useMemo(() => {
+    if (tooltipState?.activeSeries) {
+      return {
+        value: series[tooltipState.activeSeries].values[tooltipState.index].value,
+        metrics: categories.map(c => ({ key: c.key, value: series[tooltipState.activeSeries].metric[c.key]}))
+      };
     } else {
       return undefined;
     }
@@ -155,6 +173,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
               {series.map((s, i) =>
                 <path stroke={color(s.metadata.name)}
                   key={i} className="line"
+                  style={{opacity: tooltipState?.activeSeries !== undefined ? (i === tooltipState?.activeSeries ? 1 : .2) : 1 }}
                   d={getDataLine(s) as string}
                   clipPath="url(#clip-line)"/>)}
               <g ref={tooltipAnchor}>

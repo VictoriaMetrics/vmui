@@ -3,12 +3,15 @@ import {Box, makeStyles, Typography} from "@material-ui/core";
 
 export interface ChartTooltipData {
   value: number;
-  name: string;
+  metrics: {
+    key: string;
+    value: string;
+  }[];
   color?: string;
 }
 
 export interface ChartTooltipProps {
-  data: ChartTooltipData[];
+  data: ChartTooltipData;
   time?: Date;
 }
 
@@ -26,12 +29,14 @@ export const ChartTooltip: React.FC<ChartTooltipProps> = ({data, time}) => {
       <Box fontStyle="italic" mb={.5}>
         <Typography variant="subtitle1">{`${time?.toLocaleDateString()} ${time?.toLocaleTimeString()}`}</Typography>
       </Box>
+      <Box mb={.5}>
+        <Typography variant="subtitle2">{`Value: ${new Intl.NumberFormat().format(data.value)}`}</Typography>
+      </Box>
       <Box>
         <Typography variant="body2">
-          {data.map(({name, color,value}) =>
-            <Box mb={.25} key={name} display="flex" flexDirection="row" alignItems="center">
-              <div style={{backgroundColor: color, width: "10px", height: "10px", marginRight: "4px"}}></div>
-              {value}
+          {data.metrics.map(({key, value}) =>
+            <Box mb={.25} key={key} display="flex" flexDirection="row" alignItems="center">
+              {`${key}: ${value}`}
             </Box>)}
         </Typography>
       </Box>

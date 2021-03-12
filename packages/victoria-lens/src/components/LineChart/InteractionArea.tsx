@@ -7,13 +7,14 @@ interface LineI {
   xScale: ScaleTime<number, number>;
   datesInChart: Date[];
   setSelection: (from: Date, to: Date) => void;
-  onInteraction: (index: number | undefined) => void; // key is index. undefined means no interaction
+  onInteraction: (index: number | undefined, y: number | undefined) => void; // key is index. undefined means no interaction
 }
 
 export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, onInteraction, setSelection}) => {
   const refBrush = useRef<SVGGElement>(null);
 
   const [currentActivePoint, setCurrentActivePoint] = useState<number>();
+  const [currentY, setCurrentY] = useState<number>();
   const [isBrushed, setIsBrushed] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-function-return-type
@@ -95,6 +96,7 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, 
         const coords: [number, number] = d3Pointer(event);
         if (!isBrushed) {
           defineActivePoint(coords[0]);
+          setCurrentY(coords[1]);
         }
       })
       .on("mouseout", () => {
@@ -105,8 +107,8 @@ export const InteractionArea: React.FC<LineI> = ({yScale, xScale, datesInChart, 
   }, [xScale, datesInChart, isBrushed]);
 
   useEffect(() => {
-    onInteraction(currentActivePoint);
-  }, [currentActivePoint, onInteraction]);
+    onInteraction(currentActivePoint, currentY);
+  }, [currentActivePoint, currentY, onInteraction]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
