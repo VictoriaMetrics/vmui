@@ -1,4 +1,22 @@
-import qs, {ParsedQs} from "qs";
+import qs from "qs";
+
+const decoder = (value: string)  => {
+  if (/^(\d+|\d*\.\d+)$/.test(value)) {
+    return parseFloat(value);
+  }
+
+  const keywords = {
+    true: true,
+    false: false,
+    null: null,
+    undefined: undefined,
+  };
+  if (value in keywords) {
+    return keywords[value as keyof typeof keywords];
+  }
+
+  return value;
+};
 
 export const setQueryStringWithoutPageReload = (qsValue: string): void => {
   const w = window;
@@ -17,7 +35,7 @@ export const setQueryStringValue = (
   newValue: Record<string, unknown>,
   queryString = window.location.search
 ): void => {
-  const values = qs.parse(queryString, { ignoreQueryPrefix: true });
+  const values = qs.parse(queryString, { ignoreQueryPrefix: true, decoder });
   const newQsValue = qs.stringify({ ...values, ...newValue }, { encode: false });
   setQueryStringWithoutPageReload(newQsValue);
 };
@@ -25,7 +43,7 @@ export const setQueryStringValue = (
 export const getQueryStringValue = (
   key: string,
   queryString = window.location.search
-): string | ParsedQs | string[] | ParsedQs[] | undefined => {
-  const values = qs.parse(queryString, { ignoreQueryPrefix: true });
+): unknown => {
+  const values = qs.parse(queryString, { ignoreQueryPrefix: true, decoder });
   return values[key];
 };

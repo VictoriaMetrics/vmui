@@ -29,8 +29,11 @@ const useStyles = makeStyles({
 export const Legend: FC<LegendProps> = ({labels, onChange, categories}) => {
   const classes = useStyles();
 
-  const commonLabels = useMemo(() => categories.filter(c => c.variations === 1)
-    .map(c => `${c.key}: ${labels[0].labelData[c.key]}`), [categories, labels]);
+  const commonLabels = useMemo(() => labels.length > 0
+    ? categories
+      .filter(c => c.variations === 1)
+      .map(c => `${c.key}: ${labels[0].labelData[c.key]}`)
+    : [], [categories, labels]);
 
   const uncommonLabels = useMemo(() => categories.filter(c => c.variations !== 1).map(c => c.key), [categories]);
 

@@ -99,28 +99,30 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
     });
   };
 
-  return (
-    <>
-      {amountOfSeries > initialMaxAmount && <div style={{textAlign: "center"}}>
-        {amountOfSeries > showN
-          ? <span style={{fontStyle: "italic"}}>Showing only first {showN} of {amountOfSeries} series.&nbsp;
-            {showN + showingIncrement >= amountOfSeries
-              ?
-              <InlineBtn handler={() => setShowN(amountOfSeries)} text="Show all"/>
-              :
-              <>
-                <InlineBtn handler={() => setShowN(prev => Math.min(prev + showingIncrement, amountOfSeries))} text={`Show ${showingIncrement} more`}/>,&nbsp;
-                <InlineBtn handler={() => setShowN(amountOfSeries)} text="show all"/>.
-              </>}
-          </span>
-          : <span style={{fontStyle: "italic"}}>Showing all series.&nbsp;
-            <InlineBtn handler={() => setShowN(initialMaxAmount)} text={`Show only ${initialMaxAmount}`}/>.
-          </span>}
-      </div>}
-      <LineChart height={400} series={visibleSeries} color={color} timePresets={timePresets} categories={sortedCategories}></LineChart>
-      <Legend labels={labels} onChange={onLegendChange} categories={sortedCategories}></Legend>
-    </>
-  );
+  return <>
+    {(amountOfSeries > 0)
+      ? <>
+        {amountOfSeries > initialMaxAmount && <div style={{textAlign: "center"}}>
+          {amountOfSeries > showN
+            ? <span style={{fontStyle: "italic"}}>Showing only first {showN} of {amountOfSeries} series.&nbsp;
+              {showN + showingIncrement >= amountOfSeries
+                ?
+                <InlineBtn handler={() => setShowN(amountOfSeries)} text="Show all"/>
+                :
+                <>
+                  <InlineBtn handler={() => setShowN(prev => Math.min(prev + showingIncrement, amountOfSeries))} text={`Show ${showingIncrement} more`}/>,&nbsp;
+                  <InlineBtn handler={() => setShowN(amountOfSeries)} text="show all"/>.
+                </>}
+            </span>
+            : <span style={{fontStyle: "italic"}}>Showing all series.&nbsp;
+              <InlineBtn handler={() => setShowN(initialMaxAmount)} text={`Show only ${initialMaxAmount}`}/>.
+            </span>}
+        </div>}
+        <LineChart height={400} series={visibleSeries} color={color} timePresets={timePresets} categories={sortedCategories}></LineChart>
+        <Legend labels={labels} onChange={onLegendChange} categories={sortedCategories}></Legend>
+      </>
+      : <div style={{textAlign: "center"}}>No data to show</div>}
+  </>;
 };
 
 export default GraphView;

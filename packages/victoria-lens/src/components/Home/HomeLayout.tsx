@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {AppBar, Box, CircularProgress, Fade, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, Box, CircularProgress, Fade, Link, Toolbar, Typography} from "@material-ui/core";
 import {ExecutionControls} from "./Configurator/ExecutionControls";
 import {DisplayTypeSwitch} from "./Configurator/DisplayTypeSwitch";
 import GraphView from "./Views/GraphView";
@@ -20,12 +20,28 @@ const HomeLayout: FC = () => {
     <>
       <AppBar position="static">
         <Toolbar>
-          <Box mr={2}>
+          <Box mr={2} display="flex">
             <Typography variant="h5">
               <span style={{fontWeight: "bolder"}}>VM</span>
               <span style={{fontWeight: "lighter"}}>UI</span>
             </Typography>
+            <div style={{
+              fontSize: "10px",
+              marginTop: "-2px"
+            }}>
+              <div>BETA</div>
+            </div>
           </Box>
+          <div style={{
+            fontSize: "10px",
+            position: "absolute",
+            top: "40px",
+            opacity: ".4"
+          }}>
+            <Link color="inherit" href="https://github.com/VictoriaMetrics/vmui/issues/new" target="_blank">
+              Create an issue
+            </Link>
+          </div>
           <Box flexGrow={1}>
             <ExecutionControls/>
           </Box>
