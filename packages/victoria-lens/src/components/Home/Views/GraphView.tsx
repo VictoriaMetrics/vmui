@@ -54,7 +54,8 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
   const initLabels = useMemo(() => {
     return seriesNamesStable.map(name => ({
       color: color(name),
-      label: name,
+      seriesName: name,
+      labelData: series.find(s => s.metadata.name === name)?.metric, // find is O(n) - can do faster
       checked: true // init with checked always
     } as LegendItem));
   }, [color, seriesNamesStable]);
@@ -65,7 +66,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
     setLabels(initLabels);
   }, [initLabels]);
 
-  const visibleNames = useMemo(() => labels.filter(l => l.checked).map(l => l.label), [labels]);
+  const visibleNames = useMemo(() => labels.filter(l => l.checked).map(l => l.seriesName), [labels]);
 
   const visibleSeries = useMemo(() => series.filter(s => visibleNames.includes(s.metadata.name)), [series, visibleNames]);
 
@@ -83,7 +84,7 @@ const GraphView: FC<GraphViewProps> = ({data, timePresets}) => {
   return (
     <>
       <LineChart height={400} series={visibleSeries} color={color} timePresets={timePresets} categories={sortedCategories}></LineChart>
-      <Legend labels={labels} onChange={onLegendChange}></Legend>
+      <Legend labels={labels} onChange={onLegendChange} categories={sortedCategories}></Legend>
     </>
   );
 };

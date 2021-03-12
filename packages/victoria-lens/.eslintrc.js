@@ -43,5 +43,16 @@ module.exports = {
       "error",
       {"max": 150}
     ]
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",  // Pragma to use, default to "React"
+      "version": "detect"
+    },
+    "linkComponents": [
+      // Components used as alternatives to <a> for linking, eg. <Link to={ url } />
+      "Hyperlink",
+      {"name": "Link", "linkAttribute": "to"}
+    ]
   }
 };

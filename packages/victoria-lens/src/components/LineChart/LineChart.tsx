@@ -37,7 +37,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
 
   const dispatch = useAppDispatch();
 
-  const margin = {top: 10, right: 20, bottom: 70, left: 50};
+  const margin = {top: 10, right: 20, bottom: 40, left: 50};
   const svgWidth = useMemo(() => screenWidth - margin.left - margin.right, [screenWidth, margin.left, margin.right]);
   const svgHeight = useMemo(() => height - margin.top - margin.bottom, [margin.top, margin.bottom]);
   const xScale = useMemo(() => scaleTime().domain([timePresets.start,timePresets.end].map(dateFromSeconds)).range([0, svgWidth]), [
