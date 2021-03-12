@@ -1,30 +1,14 @@
 import React, {FC, useEffect, useState} from "react";
-import {Box, Link, Popover, TextField, Typography} from "@material-ui/core";
+import {Box, Popover, TextField, Typography} from "@material-ui/core";
 import {TimeDurationPopover} from "./TimeDurationPopover";
 import {useAppDispatch, useAppState} from "../../../state/StateContext";
 import {dateFromSeconds, formatDateForNativeInput} from "../../../utils/time";
-import {makeStyles} from "@material-ui/core/styles";
+import {InlineBtn} from "../../common/InlineBtn";
 
 interface TimeSelectorProps {
   setDuration: (str: string) => void;
   duration: string;
 }
-
-const useStyles = makeStyles({
-  inlineBtn: {
-    "&:hover": {
-      cursor: "pointer"
-    },
-  }
-});
-
-const InlineBtn: React.FC<{handler: () => void; text: string}> = ({handler, text}) => {
-  const classes = useStyles();
-  return <Link component="span" className={classes.inlineBtn}
-    onClick={handler}>
-    {text}
-  </Link>;
-};
 
 export const TimeSelector: FC<TimeSelectorProps> = ({setDuration}) => {
 
