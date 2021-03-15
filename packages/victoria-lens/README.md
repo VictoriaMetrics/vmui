@@ -39,6 +39,17 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+## Build and run in Docker
+**Build docker container**
+`docker build -t vmui:0.1 .`
+
+**Run builded container on a custom 8080 port**
+`docker run --rm --name vmui -p 8080:80 vmui:0.1`
+
+
+**Note:** this [Dockerfile](https://github.com/VictoriaMetrics/vmui/blob/master/packages/victoria-lens/Dockerfile) use static builded files from [npm run build](https://github.com/VictoriaMetrics/vmui/tree/master/packages/victoria-lens#npm-run-eject) .
+
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
