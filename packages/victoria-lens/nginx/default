@@ -45,3 +45,4 @@ server  {
 #    access_log /var/log/nginx/vmui-access.log;
 #    error_log /var/log/nginx/vmui-error.log;
 
+}
