@@ -22,6 +22,7 @@ export type Action =
     | { type: "SET_SERVER", payload: string }
     | { type: "SET_QUERY", payload: string }
     | { type: "SET_DURATION", payload: string }
+    | { type: "SET_UNTIL", payload: Date }
     | { type: "SET_PERIOD", payload: TimePeriod }
     | { type: "RUN_QUERY"}
     | { type: "RUN_QUERY_TO_NOW"}
@@ -63,7 +64,15 @@ export function reducer(state: AppState, action: Action): AppState {
         time: {
           ...state.time,
           duration: action.payload,
-          period: getTimeperiodForDuration(action.payload,dateFromSeconds(state.time.period.end))
+          period: getTimeperiodForDuration(action.payload, dateFromSeconds(state.time.period.end))
+        }
+      };
+    case "SET_UNTIL":
+      return {
+        ...state,
+        time: {
+          ...state.time,
+          period: getTimeperiodForDuration(state.time.duration, action.payload)
         }
       };
     case "SET_PERIOD":

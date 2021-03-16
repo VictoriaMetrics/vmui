@@ -1,5 +1,6 @@
 import React, {FC, useEffect, useState} from "react";
 import {Box, Popover, TextField, Typography} from "@material-ui/core";
+import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import {TimeDurationPopover} from "./TimeDurationPopover";
 import {useAppDispatch, useAppState} from "../../../state/StateContext";
 import {dateFromSeconds, formatDateForNativeInput} from "../../../utils/time";
@@ -97,13 +98,14 @@ export const TimeSelector: FC<TimeSelectorProps> = ({setDuration}) => {
     {/*setup end time*/}
     <Box px={1}>
       <Box>
-        <TextField
-          type="datetime-local"
+        <KeyboardDateTimePicker
+          variant="inline"
+          ampm={false}
           label="Until"
           value={until}
-          fullWidth={true}
-          inputProps={{step: 1}}
-          InputLabelProps={{shrink: true}}
+          onChange={date => dispatch({type: "SET_UNTIL", payload: date as unknown as Date})}
+          onError={console.log}
+          format="DD/MM/YYYY HH:mm:ss"
         />
       </Box>
 

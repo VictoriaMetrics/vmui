@@ -5,6 +5,11 @@ import {StateProvider} from "./state/StateContext";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+
+// pick a date util library
+import DayJsUtils from "@date-io/dayjs";
+
 const App: FC = () => {
 
   const THEME = createMuiTheme({
@@ -16,13 +21,15 @@ const App: FC = () => {
   return (
     <>
       <CssBaseline />
-      <MuiThemeProvider theme={THEME}>
-        <StateProvider>
-          <SnackbarProvider>
-            <HomeLayout/>
-          </SnackbarProvider>
-        </StateProvider>
-      </MuiThemeProvider>
+      <MuiPickersUtilsProvider utils={DayJsUtils}>
+        <MuiThemeProvider theme={THEME}>
+          <StateProvider>
+            <SnackbarProvider>
+              <HomeLayout/>
+            </SnackbarProvider>
+          </StateProvider>
+        </MuiThemeProvider>
+      </MuiPickersUtilsProvider>
     </>
   );
 };
