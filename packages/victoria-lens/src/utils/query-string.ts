@@ -15,7 +15,7 @@ const decoder = (value: string)  => {
     return keywords[value as keyof typeof keywords];
   }
 
-  return value;
+  return decodeURI(value);
 };
 
 export const setQueryStringWithoutPageReload = (qsValue: string): void => {
