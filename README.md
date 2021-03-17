@@ -1,6 +1,6 @@
 ## Packages
 
-### victoria-lens
+### victoria-metrics-ui
 
 Features:
 - configurable Server URL
@@ -17,7 +17,7 @@ In order to see docker-related instructions please see Readme inside the package
 
 In order to build on any machine with stable NodeJS:
 ```
-cd packages/victoria-lens
+cd packages/victoria-metrics-ui
 npm install
 npm run build
 ```

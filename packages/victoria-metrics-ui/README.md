@@ -47,7 +47,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 `docker run --rm --name vmui -p 8080:80 vmui:0.1`
 
 
-**Note:** this [Dockerfile](https://github.com/VictoriaMetrics/vmui/blob/master/packages/victoria-lens/Dockerfile) use static builded files from [npm run build](https://github.com/VictoriaMetrics/vmui/tree/master/packages/victoria-lens#npm-run-eject) .
+**Note:** this [Dockerfile](https://github.com/VictoriaMetrics/vmui/blob/master/packages/victoria-metrics-ui/Dockerfile) use static builded files from [npm run build](https://github.com/VictoriaMetrics/vmui/tree/master/packages/victoria-metrics-ui#npm-run-eject) .
 
 
 ## Learn More

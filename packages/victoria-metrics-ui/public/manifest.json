@@ -1,6 +1,6 @@
 {
-  "short_name": "Victoria Lens",
-  "name": "Victoria Lens is a metric explorer for Victoria Metrics",
+  "short_name": "Victoria Metrics UI",
+  "name": "Victoria Metrics UI is a metric explorer for Victoria Metrics",
   "icons": [
     {
       "src": "favicon-32x32.png",
