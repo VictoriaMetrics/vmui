@@ -4,11 +4,16 @@
 
 Features:
 - configurable Server URL
-- 4 variants of time ranges (from "Last 2 Minutes" to "Last 24 Hours") - every variant have own resolution to show around 300 data points
-- query editor has basic highlighting and can easily confirm `\t` and `\n` (those are trimmed per line for API request)
+- configurable time range - every variant have own resolution to show around 30 data points
+- query editor has basic highlighting and can be multi-line
 - chart is responsive by width
 - color assignment for series is automatic
-- legend includes basic naming
+- legend with reduced naming
+- tooltips for closest data point
+- auto-refresh mode with several time interval presets
+- table and raw JSON Query viewer
+
+In order to see docker-related instructions please see Readme inside the package
 
 In order to build on any machine with stable NodeJS:
 ```
@@ -16,7 +21,7 @@ cd packages/victoria-lens
 npm install
 npm run build
 ```
-this generates a bundle with static site (in `build` folder) that can be deployed anywhere. Total size is around 700 KB.
+this generates a bundle with static site (in `build` folder) that can be deployed anywhere. Total size is around 950 KB.
 
 In order to gather some metrics locally:
 ```bash
