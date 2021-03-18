@@ -1,4 +1,4 @@
-export type StorageKeys = "PREFERRED_URL";
+export type StorageKeys = "PREFERRED_URL" | "LAST_QUERY";
 
 export const saveToStorage = (key: StorageKeys, value: string): void => {
   window.localStorage.setItem(key, value);

@@ -56,6 +56,7 @@ export const useFetchQuery = (): {
         const response = await fetch(fetchUrl);
         if (response.ok) {
           saveToStorage("PREFERRED_URL", serverUrl);
+          saveToStorage("LAST_QUERY", query);
           const resp = await response.json();
           setError(undefined);
           displayType === "chart" ? setGraphData(resp.data.result) : setLiveData(resp.data.result);
