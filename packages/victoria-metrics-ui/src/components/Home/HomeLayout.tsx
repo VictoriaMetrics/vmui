@@ -9,12 +9,13 @@ import QueryConfigurator from "./Configurator/QueryConfigurator";
 import {useFetchQuery} from "./Configurator/useFetchQuery";
 import JsonView from "./Views/JsonView";
 import {UrlCopy} from "./UrlCopy";
+import {Alert} from "@material-ui/lab";
 
 const HomeLayout: FC = () => {
 
   const {displayType, time: {period}} = useAppState();
 
-  const {fetchUrl, isLoading, liveData, graphData} = useFetchQuery();
+  const {fetchUrl, isLoading, liveData, graphData, error} = useFetchQuery();
 
   return (
     <>
@@ -68,6 +69,10 @@ const HomeLayout: FC = () => {
             </Box>
           </Fade>}
           {<Box p={2}>
+            {error &&
+            <Alert color="error" style={{fontSize: "14px"}}>
+              {error}
+            </Alert>}
             {graphData && period && (displayType === "chart") &&
               <GraphView data={graphData} timePresets={period}></GraphView>}
             {liveData && (displayType === "code") && <JsonView data={liveData}/>}

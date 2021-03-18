@@ -20,8 +20,9 @@ const useStyles = makeStyles({
   legendWrapper: {
     display: "grid",
     width: "100%",
-    gridTemplateColumns: "repeat(auto-fill, 250px)",
-    gridColumnGap: ".5em"
+    gridTemplateColumns: "repeat(auto-fit)", // experiments like repeat(auto-fit, minmax(200px , auto)) may reduce size but readability as well
+    gridColumnGap: ".5em",
+    paddingLeft: "8px"
   }
 });
 
@@ -52,6 +53,7 @@ export const Legend: FC<LegendProps> = ({labels, onChange, categories}) => {
                 }}
                 style={{
                   color: legendItem.color,
+                  padding: "4px"
                 }}
               />
             }

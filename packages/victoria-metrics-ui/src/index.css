@@ -11,6 +11,12 @@ code {
     monospace;
 }
 
+/*Material UI global classes*/
+
+.MuiAccordionSummary-content {
+  margin: 10px 0 !important;
+}
+
 /* TODO: find better way to override codemirror styles */
 .cm-activeLine {
   background-color: inherit !important;

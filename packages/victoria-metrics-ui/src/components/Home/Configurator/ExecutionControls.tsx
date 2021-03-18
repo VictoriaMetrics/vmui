@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from "react";
-import {Box, FormControlLabel, IconButton, Switch} from "@material-ui/core";
+import {Box, FormControlLabel, IconButton, Switch, Tooltip} from "@material-ui/core";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 
 import EqualizerIcon from "@material-ui/icons/Equalizer";
@@ -71,9 +71,11 @@ export const ExecutionControls: FC = () => {
 
   return <Box display="flex" alignItems="center">
     <Box mr={2}>
-      <IconButton onClick={()=>dispatch({type: "RUN_QUERY"})}>
-        <PlayCircleOutlineIcon className={classes.colorizing} fontSize="large"/>
-      </IconButton>
+      <Tooltip title="Execute Query">
+        <IconButton onClick={()=>dispatch({type: "RUN_QUERY"})}>
+          <PlayCircleOutlineIcon className={classes.colorizing} fontSize="large"/>
+        </IconButton>
+      </Tooltip>
     </Box>
     {<FormControlLabel
       control={<Switch size="small" className={classes.colorizing} checked={autoRefresh} onChange={handleChange} />}

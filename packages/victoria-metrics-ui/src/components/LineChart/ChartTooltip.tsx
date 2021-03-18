@@ -30,7 +30,9 @@ export const ChartTooltip: React.FC<ChartTooltipProps> = ({data, time}) => {
         <Typography variant="subtitle1">{`${time?.toLocaleDateString()} ${time?.toLocaleTimeString()}`}</Typography>
       </Box>
       <Box mb={.5} my={1}>
-        <Typography variant="subtitle2">{`Value: ${new Intl.NumberFormat().format(data.value)}`}</Typography>
+        <Typography variant="subtitle2">{`Value: ${new Intl.NumberFormat(undefined, {
+          maximumFractionDigits: 10
+        }).format(data.value)}`}</Typography>
       </Box>
       <Box>
         <Typography variant="body2">

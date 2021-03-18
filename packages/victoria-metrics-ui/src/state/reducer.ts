@@ -1,6 +1,7 @@
 import {DisplayType} from "../components/Home/Configurator/DisplayTypeSwitch";
 import {TimeParams, TimePeriod} from "../types";
 import {dateFromSeconds, getDurationFromPeriod, getTimeperiodForDuration} from "../utils/time";
+import {getFromStorage} from "../utils/storage";
 
 export interface TimeState {
   duration: string;
@@ -29,9 +30,9 @@ export type Action =
     | { type: "TOGGLE_AUTOREFRESH"}
 
 export const initialState: AppState = {
-  serverUrl: "https://demo.promlabs.com",
+  serverUrl: getFromStorage("PREFERRED_URL") || "https://", // https://demo.promlabs.com or https://play.victoriametrics.com/select/accounting/1/6a716b0f-38bc-4856-90ce-448fd713e3fe/prometheus",
   displayType: "chart",
-  query: "demo_memory_usage_bytes", // prometheus_http_request_duration_seconds_bucket
+  query: "\n", // demo_memory_usage_bytes
   time: {
     duration: "1h",
     period: getTimeperiodForDuration("1h")

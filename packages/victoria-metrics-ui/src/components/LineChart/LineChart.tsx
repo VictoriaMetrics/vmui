@@ -80,7 +80,7 @@ export const LineChart: React.FC<LineChartProps> = ({series, timePresets, height
 
           // define closest series in chart
           const hoveringOverValue = yScale.invert(y);
-          const closestPoint = series.map(s => s.values[key].value).reduce((acc, nextValue, index) => {
+          const closestPoint = series.map(s => s.values[key]?.value).reduce((acc, nextValue, index) => {
             const delta = Math.abs(hoveringOverValue - nextValue);
             if (delta < acc.delta) {
               acc = {delta, index};
