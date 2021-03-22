@@ -10,10 +10,12 @@ RUN cd /app && npm install
 COPY . /app
 RUN npm run build
 
-FROM nginx:latest as production-stage
+FROM nginxinc/nginx-unprivileged as production-stage
 
 COPY --from=build-stage /app/build /usr/share/nginx/html
+
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default /etc/nginx/sites-enabled/default
-EXPOSE 80
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
