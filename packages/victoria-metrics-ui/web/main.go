@@ -17,6 +17,7 @@ var listenAddr = flag.String("listenAddr",":8080","defines listen addr for http 
 
 
 func main(){
+	flag.Parse()
 	handler := http.NewServeMux()
 	handler.Handle("/",http.FileServer(http.FS(files)))
 	handler.HandleFunc("/health", func(writer http.ResponseWriter, request *http.Request) {
