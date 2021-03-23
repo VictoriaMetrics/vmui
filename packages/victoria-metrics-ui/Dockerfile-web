@@ -1,0 +1,28 @@
+FROM node:14-alpine3.12 as build-static-stage
+
+RUN apk update && apk add --no-cache bash bash-doc bash-completion libtool autoconf automake nasm pkgconfig libpng gcc make g++ zlib-dev gawk
+
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./package.json /app/package.json
+COPY ./package-lock.json /app/package-lock.json
+RUN cd /app && npm install
+COPY . /app
+RUN npm run build
+
+
+FROM golang:1.16.2 as build-web-stage
+COPY --from=build-static-stage /app/build /build
+
+WORKDIR /build
+COPY web/ /build/
+RUN CGO_ENABLED=0 go build main.go && chmod +x main
+
+FROM alpine:3.13.2
+USER root
+COPY --from=build-web-stage /build/main /app/web
+RUN adduser -S -D -u 1000 web && chown -R web /app
+
+USER web
+EXPOSE 8080
+ENTRYPOINT ["/app/web"]
