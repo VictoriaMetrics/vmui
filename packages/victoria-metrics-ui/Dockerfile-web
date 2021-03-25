@@ -16,11 +16,14 @@ COPY --from=build-static-stage /app/build /build
 
 WORKDIR /build
 COPY web/ /build/
-RUN CGO_ENABLED=0 go build main.go && chmod +x main
+RUN GOOS=linux GOARCH=amd64 GO111MODULE=on CGO_ENABLED=0 go build -o web-amd64 github.com/VictoriMetrics/vmui/ && \
+    GOOS=windows GOARCH=amd64 GO111MODULE=on CGO_ENABLED=0 go build -o web-windows github.com/VictoriMetrics/vmui/
 
 FROM alpine:3.13.2
 USER root
-COPY --from=build-web-stage /build/main /app/web
+
+COPY --from=build-web-stage /build/web-amd64 /app/web
+COPY --from=build-web-stage /build/web-windows /app/web-windows
 RUN adduser -S -D -u 1000 web && chown -R web /app
 
 USER web

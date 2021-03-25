@@ -1,0 +1,23 @@
+name: publish latest
+# This workflow will run on master branch
+on:
+  push:
+    branches:
+      - 'master'
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v2.x
+
+      - name: Code checkout
+        uses: actions/checkout@master
+
+      - name: build and push to remote registry
+        env:
+          TAG:   ${{ env.GITHUB_REF_SLUG }}
+        run: |
+          echo ${{secrets.REPO_KEY}} | docker login --username ${{secrets.REPO_USER}} --password-stdin
+          make latest-push
