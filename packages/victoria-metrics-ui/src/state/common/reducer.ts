@@ -1,7 +1,7 @@
-import {DisplayType} from "../components/Home/Configurator/DisplayTypeSwitch";
-import {TimeParams, TimePeriod} from "../types";
-import {dateFromSeconds, getDurationFromPeriod, getTimeperiodForDuration} from "../utils/time";
-import {getFromStorage} from "../utils/storage";
+import {DisplayType} from "../../components/Home/Configurator/DisplayTypeSwitch";
+import {TimeParams, TimePeriod} from "../../types";
+import {dateFromSeconds, getDurationFromPeriod, getTimeperiodForDuration} from "../../utils/time";
+import {getFromStorage} from "../../utils/storage";
 
 export interface TimeState {
   duration: string;

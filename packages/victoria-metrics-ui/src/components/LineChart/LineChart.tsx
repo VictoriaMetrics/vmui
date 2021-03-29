@@ -10,7 +10,7 @@ import {InteractionLine} from "./InteractionLine";
 import {InteractionArea} from "./InteractionArea";
 import {Box, Popover} from "@material-ui/core";
 import {ChartTooltip, ChartTooltipData} from "./ChartTooltip";
-import {useAppDispatch} from "../../state/StateContext";
+import {useAppDispatch} from "../../state/common/StateContext";
 import {dateFromSeconds} from "../../utils/time";
 import {MetricCategory} from "../../hooks/useSortedCategories";
 

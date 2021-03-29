@@ -1,6 +1,6 @@
 import React, {createContext, Dispatch, FC, useContext, useEffect, useMemo, useReducer} from "react";
 import {Action, AppState, initialState, reducer} from "./reducer";
-import {getQueryStringValue, setQueryStringValue} from "../utils/query-string";
+import {getQueryStringValue, setQueryStringValue} from "../../utils/query-string";
 
 type StateContextType = { state: AppState, dispatch: Dispatch<Action> };
 
