@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from "react";
 import {Box, Popover, TextField, Typography} from "@material-ui/core";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import {TimeDurationPopover} from "./TimeDurationPopover";
-import {useAppDispatch, useAppState} from "../../../state/StateContext";
+import {useAppDispatch, useAppState} from "../../../state/common/StateContext";
 import {dateFromSeconds, formatDateForNativeInput} from "../../../utils/time";
 import {InlineBtn} from "../../common/InlineBtn";
 

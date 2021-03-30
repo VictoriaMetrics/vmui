@@ -3,7 +3,7 @@ import {Box, FormControlLabel, IconButton, Switch, Tooltip} from "@material-ui/c
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 
 import EqualizerIcon from "@material-ui/icons/Equalizer";
-import {useAppDispatch, useAppState} from "../../../state/StateContext";
+import {useAppDispatch, useAppState} from "../../../state/common/StateContext";
 import CircularProgressWithLabel from "../../common/CircularProgressWithLabel";
 import {makeStyles} from "@material-ui/core/styles";
 

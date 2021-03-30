@@ -5,7 +5,7 @@ import ShowChartIcon from "@material-ui/icons/ShowChart";
 import CodeIcon from "@material-ui/icons/Code";
 
 import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
-import {useAppDispatch, useAppState} from "../../../state/StateContext";
+import {useAppDispatch, useAppState} from "../../../state/common/StateContext";
 import {withStyles} from "@material-ui/core";
 
 export type DisplayType = "table" | "chart" | "code";
