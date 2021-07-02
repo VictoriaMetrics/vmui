@@ -17,7 +17,8 @@ package-via-docker: package-base-image
           --user $(shell id -u):$(shell id -g) \
          --mount type=bind,src="$(shell pwd)",dst=/build \
          -w /build/packages/victoria-metrics-ui \
-         builder-image-vmui npm run build
+         --entrypoint=/bin/bash \
+         builder-image-vmui -c "npm install && npm run build"
 
 release-via-docker: package-via-docker
 	echo ${PKG_TAG}
